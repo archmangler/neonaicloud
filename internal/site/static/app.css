@@ -746,6 +746,46 @@ textarea {
   border: 0;
 }
 
+.engagement-diagram-panel {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.engagement-diagram {
+  overflow-x: auto;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  background: hsl(230 28% 5% / 0.72);
+  padding: 1rem;
+}
+
+.engagement-svg {
+  display: block;
+  width: 100%;
+  min-width: 52rem;
+  height: auto;
+}
+
+.engagement-svg-phase {
+  fill: hsl(var(--foreground));
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.engagement-svg-detail,
+.engagement-svg-label {
+  fill: hsl(var(--muted-foreground));
+  font-size: 11px;
+}
+
+.engagement-svg-label {
+  font-size: 12px;
+}
+
+.engagement-legend {
+  margin-top: 0;
+}
+
 .contact-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 1.05fr);
