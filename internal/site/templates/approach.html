@@ -22,6 +22,110 @@
 
         {{template "proof-strip" .}}
 
+        <section class="section" aria-labelledby="engagement-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="engagement-heading">Consulting engagement model</h2>
+              <p class="section-intro muted">
+                A management-consulting structure for agile engineering delivery: diagnose before design,
+                deliver in evidence-backed increments, prove readiness, then embed ownership.
+              </p>
+            </div>
+          </div>
+          <article class="panel engagement-diagram-panel">
+            <div class="engagement-diagram" role="img" aria-labelledby="engagement-diagram-title engagement-diagram-desc">
+              <p id="engagement-diagram-title" class="visually-hidden">Neon AI Cloud consulting engagement flow</p>
+              <p id="engagement-diagram-desc" class="visually-hidden">
+                Six phases: Mobilise, Diagnose, Architect, Deliver in agile increments, Prove, and Embed,
+                with feedback from Prove to Deliver and from Embed back to Diagnose for the next wave.
+              </p>
+              <svg viewBox="0 0 1100 340" class="engagement-svg" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="eng-node" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="hsl(233 100% 72% / 0.2)"/>
+                    <stop offset="100%" stop-color="hsl(263 92% 72% / 0.12)"/>
+                  </linearGradient>
+                  <linearGradient id="eng-line" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="hsl(233 100% 72%)"/>
+                    <stop offset="100%" stop-color="hsl(263 92% 72%)"/>
+                  </linearGradient>
+                  <marker id="eng-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="hsl(233 100% 72%)"/>
+                  </marker>
+                </defs>
+
+                <!-- Primary flow connectors -->
+                <path d="M 170 88 H 200 M 340 88 H 370 M 510 88 H 540 M 680 88 H 710 M 850 88 H 880"
+                      stroke="url(#eng-line)" stroke-width="2.5" fill="none" marker-end="url(#eng-arrow)"/>
+
+                <!-- Agile increment loop under Deliver -->
+                <path d="M 610 146 C 610 186 560 186 560 146"
+                      stroke="hsl(263 92% 72% / 0.85)" stroke-width="2" fill="none"
+                      stroke-dasharray="6 5" marker-end="url(#eng-arrow)"/>
+                <text x="585" y="204" text-anchor="middle" class="engagement-svg-label">Sprint evidence</text>
+
+                <!-- Prove feeds back into Deliver -->
+                <path d="M 780 146 C 780 230 610 230 610 146"
+                      stroke="hsl(233 100% 72% / 0.75)" stroke-width="2" fill="none"
+                      stroke-dasharray="6 5" marker-end="url(#eng-arrow)"/>
+                <text x="700" y="252" text-anchor="middle" class="engagement-svg-label">Re-plan increment</text>
+
+                <!-- Embed compounds into next Diagnose -->
+                <path d="M 950 146 C 950 300 270 300 270 146"
+                      stroke="hsl(263 92% 72% / 0.7)" stroke-width="2" fill="none"
+                      stroke-dasharray="8 6" marker-end="url(#eng-arrow)"/>
+                <text x="610" y="322" text-anchor="middle" class="engagement-svg-label">Next wave / compound learning</text>
+
+                <!-- Phase nodes -->
+                <g class="engagement-node">
+                  <rect x="40" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(233 100% 72%)" stroke-width="1.5"/>
+                  <text x="105" y="72" text-anchor="middle" class="engagement-svg-phase">01 Mobilise</text>
+                  <text x="105" y="96" text-anchor="middle" class="engagement-svg-detail">Scope, sponsors,</text>
+                  <text x="105" y="114" text-anchor="middle" class="engagement-svg-detail">constraints</text>
+                </g>
+                <g class="engagement-node">
+                  <rect x="210" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(235 32% 24%)" stroke-width="1.5"/>
+                  <text x="275" y="72" text-anchor="middle" class="engagement-svg-phase">02 Diagnose</text>
+                  <text x="275" y="96" text-anchor="middle" class="engagement-svg-detail">Workloads, gaps,</text>
+                  <text x="275" y="114" text-anchor="middle" class="engagement-svg-detail">success criteria</text>
+                </g>
+                <g class="engagement-node">
+                  <rect x="380" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(235 32% 24%)" stroke-width="1.5"/>
+                  <text x="445" y="72" text-anchor="middle" class="engagement-svg-phase">03 Architect</text>
+                  <text x="445" y="96" text-anchor="middle" class="engagement-svg-detail">Options, interfaces,</text>
+                  <text x="445" y="114" text-anchor="middle" class="engagement-svg-detail">acceptance design</text>
+                </g>
+                <g class="engagement-node">
+                  <rect x="550" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(235 32% 24%)" stroke-width="1.5"/>
+                  <text x="615" y="72" text-anchor="middle" class="engagement-svg-phase">04 Deliver</text>
+                  <text x="615" y="96" text-anchor="middle" class="engagement-svg-detail">Agile increments,</text>
+                  <text x="615" y="114" text-anchor="middle" class="engagement-svg-detail">artefacts &amp; proof</text>
+                </g>
+                <g class="engagement-node">
+                  <rect x="720" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(235 32% 24%)" stroke-width="1.5"/>
+                  <text x="785" y="72" text-anchor="middle" class="engagement-svg-phase">05 Prove</text>
+                  <text x="785" y="96" text-anchor="middle" class="engagement-svg-detail">Validate behaviour,</text>
+                  <text x="785" y="114" text-anchor="middle" class="engagement-svg-detail">risk &amp; readiness</text>
+                </g>
+                <g class="engagement-node">
+                  <rect x="890" y="40" width="130" height="96" rx="8" fill="url(#eng-node)" stroke="hsl(235 32% 24%)" stroke-width="1.5"/>
+                  <text x="955" y="72" text-anchor="middle" class="engagement-svg-phase">06 Embed</text>
+                  <text x="955" y="96" text-anchor="middle" class="engagement-svg-detail">Handover, ownership,</text>
+                  <text x="955" y="114" text-anchor="middle" class="engagement-svg-detail">operate</text>
+                </g>
+              </svg>
+            </div>
+            <ol class="engagement-legend list">
+              <li><strong>Mobilise</strong> — align sponsors, scope, and non-negotiable constraints.</li>
+              <li><strong>Diagnose</strong> — establish workloads, gaps, risk posture, and measurable success criteria.</li>
+              <li><strong>Architect</strong> — design options and interfaces; define acceptance before build accelerates.</li>
+              <li><strong>Deliver</strong> — execute agile increments that produce artefacts and evidence each cycle.</li>
+              <li><strong>Prove</strong> — validate readiness; incomplete proof returns work to the next increment.</li>
+              <li><strong>Embed</strong> — transfer ownership, runbooks, and operating baselines; compound into the next wave.</li>
+            </ol>
+          </article>
+        </section>
+
         <section class="section" aria-labelledby="loop-heading">
           <div class="section-heading">
             <div>
