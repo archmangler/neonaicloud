@@ -1,0 +1,69 @@
+{{define "about.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">About</p>
+          <h1>Engineering-led infrastructure for AI</h1>
+          <p class="lead">
+            Neon AI Cloud is an engineering-led company specialising in AI infrastructure and the
+            autonomous enterprise. We build the platforms and systems other AI organisations depend on.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="detail-grid">
+          <article class="panel">
+            <p class="eyebrow">Position</p>
+            <h2 class="card-title">Quiet confidence, durable systems</h2>
+            <p class="card-body">
+              The company is positioned for technical authority, precision, and long-term stability—
+              closer to semiconductor, aerospace, and enterprise infrastructure organisations than to
+              consumer AI startups.
+            </p>
+            <p class="card-body">
+              Work spans premium AI application development, platform engineering, AI infrastructure
+              design, implementation and validation, embedded systems, and cloud.
+            </p>
+          </article>
+          <article class="panel">
+            <p class="eyebrow">Attributes</p>
+            <h2 class="card-title">Brand personality</h2>
+            <ul class="list">
+              <li>Precise</li>
+              <li>Infrastructure-grade</li>
+              <li>Calm</li>
+              <li>Durable</li>
+              <li>Technical</li>
+              <li>Trustworthy</li>
+              <li>Evidence-oriented</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="panel">
+          <p class="eyebrow">Contact</p>
+          <h2 class="card-title">Work with Neon AI Cloud</h2>
+          <p class="card-body">
+            If you need infrastructure, platforms, or systems that must hold under real operating conditions,
+            we should talk.
+          </p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/contact">Contact</a>
+            <a class="chip" href="/capabilities">Capabilities</a>
+          </div>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

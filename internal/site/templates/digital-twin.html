@@ -1,0 +1,29 @@
+{{define "digital-twin.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Contact · Digital twin</p>
+          <h1>C-suite digital twin</h1>
+          <p class="lead">
+            Conversational channel for a digital twin of the Neon AI Cloud C-suite.
+            Also available on the <a href="/contact#csuite-digital-twin">contact page</a>.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        {{template "twin-console" .}}
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

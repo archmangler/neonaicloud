@@ -1,0 +1,133 @@
+{{define "home.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <section class="hero neon-panel" aria-labelledby="home-title">
+          <p class="eyebrow">Infrastructure for the autonomous enterprise</p>
+          <h1 id="home-title">Platforms and systems other AI organisations depend on</h1>
+          <p class="lead">
+            Neon AI Cloud specialises in premium AI application development, platform engineering,
+            AI infrastructure design, implementation and validation, embedded systems, and cloud.
+          </p>
+          <div class="actions">
+            <a class="button-primary" href="/capabilities">Explore capabilities</a>
+            <a class="chip" href="/contact">Contact</a>
+          </div>
+          <div class="system-line" role="presentation"></div>
+        </section>
+
+        <section class="section" aria-labelledby="capabilities-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="capabilities-heading">Capabilities</h2>
+              <p class="section-intro muted">
+                Service lines treated as operational modules—clear outcomes, deliberate delivery, and validation.
+              </p>
+            </div>
+            <a class="chip" href="/capabilities">View all</a>
+          </div>
+          <div class="grid-5">
+            {{range .Capabilities}}
+            <a class="panel panel-link" href="/capabilities/{{.Slug}}">
+              <p class="eyebrow">Capability</p>
+              <h3 class="card-title">{{.Name}}</h3>
+              <p class="card-body">{{.Outcome}}</p>
+              <p class="card-meta">Open module →</p>
+            </a>
+            {{end}}
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="proof-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="proof-heading">Operating profile</h2>
+              <p class="section-intro muted">
+                Signals that describe how we work—not vanity metrics.
+              </p>
+            </div>
+          </div>
+          <div class="stats">
+            <article class="stat neon-panel">
+              <p class="stat-label">Disciplines</p>
+              <p class="stat-value">5</p>
+              <p class="stat-detail">Applications, platforms, infrastructure, embedded, cloud</p>
+            </article>
+            <article class="stat neon-panel">
+              <p class="stat-label">Engagement model</p>
+              <p class="stat-value">Design → Validate</p>
+              <p class="stat-detail">Architecture through implementation and proof</p>
+            </article>
+            <article class="stat neon-panel">
+              <p class="stat-label">Positioning</p>
+              <p class="stat-value">Infrastructure-grade</p>
+              <p class="stat-detail">Built for organisations that depend on durable systems</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="approach-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="approach-heading">Approach</h2>
+              <p class="section-intro muted">
+                A closed loop from discovery to operable systems.
+              </p>
+            </div>
+            <a class="chip" href="/approach">How we work</a>
+          </div>
+          <div class="process grid-5">
+            <article class="panel process-step">
+              <p class="process-index">01</p>
+              <h3 class="card-title">Discover</h3>
+              <p class="card-body">Capture constraints, workloads, and acceptance criteria.</p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">02</p>
+              <h3 class="card-title">Design</h3>
+              <p class="card-body">Define architecture, interfaces, and operating boundaries.</p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">03</p>
+              <h3 class="card-title">Implement</h3>
+              <p class="card-body">Build against milestones with operational telemetry in mind.</p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">04</p>
+              <h3 class="card-title">Validate</h3>
+              <p class="card-body">Prove behaviour, resilience, and handover readiness.</p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">05</p>
+              <h3 class="card-title">Operate</h3>
+              <p class="card-body">Leave systems that can be owned, observed, and evolved.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="cta-heading">
+          <p class="eyebrow">Engage</p>
+          <h2 class="section-title" id="cta-heading">Infrastructure, platforms, or embedded systems</h2>
+          <p class="card-body">
+            Talk to us about AI applications, platform engineering, infrastructure design and validation,
+            embedded systems, or cloud foundations.
+          </p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/contact">Contact Neon AI Cloud</a>
+            <a class="chip" href="/about">About the company</a>
+          </div>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

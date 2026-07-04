@@ -1,0 +1,89 @@
+{{define "approach.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Approach</p>
+          <h1>Design, implement, and validate</h1>
+          <p class="lead">
+            We treat delivery as an engineering discipline: explicit requirements, deliberate architecture,
+            implementation against acceptance criteria, and evidence that systems are ready to operate.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="process grid-5" aria-label="Delivery loop">
+          <article class="panel process-step">
+            <p class="process-index">01 Discover</p>
+            <h2 class="card-title">Frame the problem</h2>
+            <p class="card-body">
+              Workloads, constraints, risk posture, and success criteria are captured before design begins.
+            </p>
+          </article>
+          <article class="panel process-step">
+            <p class="process-index">02 Design</p>
+            <h2 class="card-title">Architect with intent</h2>
+            <p class="card-body">
+              Interfaces, tenancy, operability, and failure modes are designed as first-class concerns.
+            </p>
+          </article>
+          <article class="panel process-step">
+            <p class="process-index">03 Implement</p>
+            <h2 class="card-title">Build to criteria</h2>
+            <p class="card-body">
+              Delivery proceeds in measurable milestones with telemetry and ownership in mind.
+            </p>
+          </article>
+          <article class="panel process-step">
+            <p class="process-index">04 Validate</p>
+            <h2 class="card-title">Prove readiness</h2>
+            <p class="card-body">
+              Behaviour, performance, resilience, and handover artefacts are validated with evidence.
+            </p>
+          </article>
+          <article class="panel process-step">
+            <p class="process-index">05 Operate</p>
+            <h2 class="card-title">Leave systems owned</h2>
+            <p class="card-body">
+              Runbooks, baselines, and clear ownership so platforms remain durable after engagement.
+            </p>
+          </article>
+        </section>
+
+        <section class="detail-grid">
+          <article class="panel">
+            <p class="eyebrow">Principles</p>
+            <h2 class="card-title">How decisions are made</h2>
+            <ul class="list">
+              <li>Every artefact should have a communicative or operational purpose.</li>
+              <li>Simplicity is deliberate reduction, not missing work.</li>
+              <li>Validation is part of delivery, not an optional afterthought.</li>
+              <li>Systems should be operable by the teams that inherit them.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <p class="eyebrow">Engage</p>
+            <h2 class="card-title">Start a conversation</h2>
+            <p class="card-body">
+              Describe the capability area and operating constraints. We will respond with a structured path.
+            </p>
+            <div class="actions" style="margin-top: 1rem;">
+              <a class="button-primary" href="/contact">Contact</a>
+              <a class="chip" href="/capabilities">Capabilities</a>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

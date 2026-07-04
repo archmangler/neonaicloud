@@ -1,0 +1,74 @@
+{{define "capability.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Capability</p>
+          <h1>{{.Capability.Name}}</h1>
+          <p class="lead">{{.Capability.Outcome}}</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="detail-grid">
+          <article class="panel">
+            <p class="eyebrow">Overview</p>
+            <h2 class="card-title">What this capability covers</h2>
+            <p class="card-body">{{.Capability.Overview}}</p>
+          </article>
+          <aside class="panel">
+            <p class="eyebrow">Navigate</p>
+            <h2 class="card-title">Related</h2>
+            <div class="actions" style="margin-top: 1rem;">
+              <a class="chip" href="/capabilities">All capabilities</a>
+              <a class="button-primary" href="/contact">Discuss this capability</a>
+            </div>
+          </aside>
+        </section>
+
+        <section class="detail-grid">
+          <article class="panel">
+            <p class="eyebrow">Deliverables</p>
+            <h2 class="card-title">What we deliver</h2>
+            <ul class="list">
+              {{range .Capability.Deliverables}}
+              <li>{{.}}</li>
+              {{end}}
+            </ul>
+          </article>
+          <article class="panel">
+            <p class="eyebrow">Engagement</p>
+            <h2 class="card-title">How work proceeds</h2>
+            <ol class="list">
+              {{range .Capability.Engagement}}
+              <li>{{.}}</li>
+              {{end}}
+            </ol>
+          </article>
+        </section>
+
+        <section class="panel">
+          <p class="eyebrow">Next step</p>
+          <h2 class="card-title">Engage on {{.Capability.Name}}</h2>
+          <p class="card-body">
+            Share your constraints, target outcomes, and operating context. We will respond with a clear
+            engagement path.
+          </p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/contact">Contact</a>
+            <a class="chip" href="/approach">Our approach</a>
+          </div>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

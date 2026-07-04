@@ -1,0 +1,15 @@
+# Build output
+/neonsite
+/bin/
+dist/
+
+# Local tooling
+.venv-pdf/
+.venv/
+*.exe
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

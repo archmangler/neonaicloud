@@ -1,0 +1,46 @@
+{{define "head"}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}}</title>
+<meta name="description" content="{{.Description}}">
+<link rel="icon" href="/static/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/static/app.css">
+{{end}}
+
+{{define "header"}}
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark neon-panel">
+        <img src="/static/brand/neoncloudai-logo-simple-hq.png" alt="Neon AI Cloud" width="52" height="40">
+      </span>
+      <span class="brand-text">
+        <span class="brand-eyebrow">Neon AI Cloud</span>
+        <span class="brand-name">Infrastructure &amp; Platforms</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      {{range .Nav}}
+      <a class="{{navClass $.ActiveNav .Key}}" href="{{.Href}}">{{.Label}}</a>
+      {{end}}
+    </nav>
+  </div>
+</header>
+{{end}}
+
+{{define "footer"}}
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <span class="brand-eyebrow">Neon AI Cloud</span>
+      <p class="footer-copy">Engineering-led AI infrastructure and platforms.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href="/capabilities">Capabilities</a>
+      <a href="/approach">Approach</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+{{end}}

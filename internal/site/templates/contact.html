@@ -1,0 +1,106 @@
+{{define "contact.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Contact</p>
+          <h1>Engage Neon AI Cloud</h1>
+          <p class="lead">
+            Send a structured enquiry, or talk with a digital twin of our C-suite in the chat window.
+            We respond to serious infrastructure and platform conversations.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="contact-layout" aria-label="Engagement channels">
+          <div class="stack" id="enquiry-form">
+            <article class="panel">
+              <p class="eyebrow">Path 01 · Enquiry</p>
+              <h2 class="card-title">Structured message</h2>
+              <p class="card-body">
+                Share the capability area, operating constraints, and outcomes you need. We follow up
+                using the contact details you provide.
+              </p>
+
+              {{if .ContactSent}}
+              <div class="panel status-panel" style="margin: 1rem 0;">
+                <p class="eyebrow">Status</p>
+                <h2 class="card-title">Enquiry received</h2>
+                <p class="card-body">
+                  Thank you. Your message has been recorded. We will respond using the contact details provided.
+                </p>
+              </div>
+              {{end}}
+
+              {{if .ContactError}}
+              <div class="panel status-panel error" style="margin: 1rem 0;">
+                <p class="eyebrow">Status</p>
+                <h2 class="card-title">Unable to send</h2>
+                <p class="card-body">{{.ContactError}}</p>
+              </div>
+              {{end}}
+
+              <form class="contact-form" action="/contact" method="post">
+                <div class="form-grid">
+                  <label class="field">
+                    <span class="form-label">Name</span>
+                    <input name="name" autocomplete="name" required value="{{.FormName}}">
+                  </label>
+                  <label class="field">
+                    <span class="form-label">Email</span>
+                    <input name="email" type="email" autocomplete="email" required value="{{.FormEmail}}">
+                  </label>
+                  <label class="field field-full">
+                    <span class="form-label">Organisation</span>
+                    <input name="organisation" autocomplete="organization" value="{{.FormOrg}}">
+                  </label>
+                  <label class="field field-full">
+                    <span class="form-label">Message</span>
+                    <textarea name="message" required placeholder="Capability area, constraints, and desired outcomes">{{.FormMessage}}</textarea>
+                  </label>
+                </div>
+                <div class="actions">
+                  <button class="button-primary" type="submit">Send enquiry</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel">
+              <p class="eyebrow">Scope</p>
+              <h2 class="card-title">What to include</h2>
+              <ul class="list">
+                <li>Capability area or problem domain</li>
+                <li>Operating constraints and timeline</li>
+                <li>Current environment or target platform</li>
+                <li>What “done” should look like</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="stack" id="digital-twin-option">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Path 02 · Digital twin</p>
+                <h2 class="section-title">Talk to the C-suite</h2>
+                <p class="section-intro muted">
+                  Chat window for a leadership digital twin. The agentic chatbot will attach to this surface.
+                </p>
+              </div>
+            </div>
+            {{template "twin-console" .}}
+          </div>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

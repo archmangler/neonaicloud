@@ -1,0 +1,38 @@
+{{define "capabilities.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Capabilities</p>
+          <h1>Service lines as system modules</h1>
+          <p class="lead">
+            Each capability is an operational entry point—what we deliver, how engagements run,
+            and the outcomes organisations can hold us to.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="grid-2" aria-label="Capability modules">
+          {{range .Capabilities}}
+          <a class="panel panel-link" href="/capabilities/{{.Slug}}">
+            <p class="eyebrow">Capability</p>
+            <h2 class="card-title">{{.Name}}</h2>
+            <p class="card-body">{{.Outcome}}</p>
+            <p class="card-meta">Open module →</p>
+          </a>
+          {{end}}
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}
