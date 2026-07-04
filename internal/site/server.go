@@ -76,6 +76,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /products", s.handleProducts)
 	s.mux.HandleFunc("GET /products/{slug}", s.handleProduct)
 	s.mux.HandleFunc("GET /approach", s.handleApproach)
+	s.mux.HandleFunc("GET /blogs", s.handleBlogs)
 	s.mux.HandleFunc("GET /about", s.handleAbout)
 	s.mux.HandleFunc("GET /contact", s.handleContactGet)
 	s.mux.HandleFunc("POST /contact", s.handleContactPost)
@@ -212,6 +213,15 @@ func (s *Server) handleApproach(w http.ResponseWriter, r *http.Request) {
 	s.render(w, r, "approach.html", page)
 }
 
+func (s *Server) handleBlogs(w http.ResponseWriter, r *http.Request) {
+	page := s.basePage(
+		"Blogs — Neon AI Cloud",
+		"Publications and commentary from Neon AI Cloud on Substack and Medium.",
+		"blogs",
+	)
+	s.render(w, r, "blogs.html", page)
+}
+
 func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {
 	page := s.basePage(
 		"About — Neon AI Cloud",
@@ -280,11 +290,14 @@ func (s *Server) basePage(title, description, activeNav string) Page {
 			{Href: "/capabilities", Label: "Capabilities", Key: "capabilities"},
 			{Href: "/products", Label: "Products", Key: "products"},
 			{Href: "/approach", Label: "Approach", Key: "approach"},
+			{Href: "/blogs", Label: "Blogs", Key: "blogs"},
 			{Href: "/about", Label: "About", Key: "about"},
 			{Href: "/contact", Label: "Contact", Key: "contact"},
 		},
-		Capabilities: Capabilities(),
-		AdminEnabled: s.auth.Enabled(),
+		Capabilities:    Capabilities(),
+		AdminEnabled:    s.auth.Enabled(),
+		BlogSubstackURL: s.cfg.BlogSubstackURL,
+		BlogMediumURL:   s.cfg.BlogMediumURL,
 	}
 }
 

@@ -39,6 +39,9 @@ type Page struct {
 	MediaFiles   []MediaFile
 	IsNewProduct bool
 
+	BlogSubstackURL string
+	BlogMediumURL   string
+
 	// SEO
 	Path         string
 	CanonicalURL string

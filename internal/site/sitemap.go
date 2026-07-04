@@ -29,6 +29,7 @@ func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
 		{Loc: base + "/capabilities", ChangeFreq: "monthly", Priority: "0.9", LastMod: today},
 		{Loc: base + "/products", ChangeFreq: "weekly", Priority: "0.9", LastMod: today},
 		{Loc: base + "/approach", ChangeFreq: "monthly", Priority: "0.8", LastMod: today},
+		{Loc: base + "/blogs", ChangeFreq: "weekly", Priority: "0.7", LastMod: today},
 		{Loc: base + "/about", ChangeFreq: "monthly", Priority: "0.7", LastMod: today},
 		{Loc: base + "/contact", ChangeFreq: "monthly", Priority: "0.7", LastMod: today},
 	}

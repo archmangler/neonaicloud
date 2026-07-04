@@ -1,0 +1,54 @@
+{{define "blogs.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          {{template "site-slogan" .}}
+          <p class="eyebrow">Blogs</p>
+          <h1>Publications</h1>
+          <p class="lead">
+            Essays, notes, and technical commentary from Neon AI Cloud. Follow our writing on Substack and Medium.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="grid-2" aria-label="Publication channels">
+          <article class="panel">
+            <p class="eyebrow">Substack</p>
+            <h2 class="card-title">Long-form notes</h2>
+            <p class="card-body">
+              In-depth writing on AI infrastructure, platforms, and engineering the autonomous enterprise.
+            </p>
+            <div class="actions" style="margin-top: 1rem;">
+              <a class="button-primary" href="{{.BlogSubstackURL}}" target="_blank" rel="noopener noreferrer">
+                Read on Substack
+              </a>
+            </div>
+          </article>
+          <article class="panel">
+            <p class="eyebrow">Medium</p>
+            <h2 class="card-title">Articles and commentary</h2>
+            <p class="card-body">
+              Shorter publications and perspectives for practitioners building durable AI systems.
+            </p>
+            <div class="actions" style="margin-top: 1rem;">
+              <a class="button-primary" href="{{.BlogMediumURL}}" target="_blank" rel="noopener noreferrer">
+                Read on Medium
+              </a>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

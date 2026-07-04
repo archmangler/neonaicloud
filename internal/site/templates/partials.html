@@ -21,16 +21,64 @@
 <link rel="stylesheet" href="/static/app.css">
 {{end}}
 
+{{define "site-slogan"}}
+<p class="site-slogan">Engineering the Autonomous Enterprise</p>
+{{end}}
+
+{{define "phoenix-aura"}}
+<div class="phoenix-aura" aria-hidden="true">
+  <svg class="phoenix-aura-svg" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="phoenix-stroke" x1="40" y1="40" x2="200" y2="280" gradientUnits="userSpaceOnUse">
+        <stop stop-color="hsl(233 100% 78%)" stop-opacity="1"/>
+        <stop offset="0.55" stop-color="hsl(263 92% 78%)" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="hsl(233 100% 72%)" stop-opacity="0.8"/>
+      </linearGradient>
+      <filter id="phoenix-glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <!-- Circuit field -->
+    <g class="phoenix-field" stroke="url(#phoenix-stroke)" stroke-width="1.15">
+      <path class="phoenix-trace phoenix-trace-a" d="M24 48 H72 M72 48 V96 M72 96 H120"/>
+      <path class="phoenix-trace phoenix-trace-b" d="M36 280 H96 M96 280 V220 M96 220 H148"/>
+      <path class="phoenix-trace phoenix-trace-c" d="M12 160 H56 M56 160 V120"/>
+      <circle cx="72" cy="48" r="2.2" fill="url(#phoenix-stroke)"/>
+      <circle cx="72" cy="96" r="2.2" fill="url(#phoenix-stroke)"/>
+      <circle cx="96" cy="280" r="2.2" fill="url(#phoenix-stroke)"/>
+      <circle cx="96" cy="220" r="2.2" fill="url(#phoenix-stroke)"/>
+      <circle cx="56" cy="160" r="2.2" fill="url(#phoenix-stroke)"/>
+    </g>
+    <!-- Electric phoenix -->
+    <g class="phoenix-mark" filter="url(#phoenix-glow)" stroke="url(#phoenix-stroke)" stroke-linecap="round" stroke-linejoin="round">
+      <path class="phoenix-body" d="M118 36 C136 72 144 118 136 168 C128 214 104 252 84 288" stroke-width="2.8"/>
+      <path class="phoenix-head" d="M118 36 L152 18 L140 54" stroke-width="2.5"/>
+      <path class="phoenix-beak" d="M152 18 L176 26" stroke-width="2.3"/>
+      <path class="phoenix-wing phoenix-wing-a" d="M126 88 L204 64" stroke-width="2.4"/>
+      <path class="phoenix-wing phoenix-wing-b" d="M124 118 L214 104" stroke-width="2.4"/>
+      <path class="phoenix-wing phoenix-wing-c" d="M120 148 L208 152" stroke-width="2.4"/>
+      <path class="phoenix-tail" d="M84 288 L62 312 M84 288 L90 318 M84 288 L108 314" stroke-width="2.1"/>
+      <circle class="phoenix-node" cx="204" cy="64" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
+      <circle class="phoenix-node" cx="214" cy="104" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
+      <circle class="phoenix-node" cx="208" cy="152" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
+      <circle class="phoenix-node" cx="176" cy="26" r="2.8" fill="url(#phoenix-stroke)" stroke="none"/>
+      <circle class="phoenix-node" cx="84" cy="288" r="3" fill="url(#phoenix-stroke)" stroke="none"/>
+    </g>
+  </svg>
+</div>
+{{end}}
+
 {{define "header"}}
+{{template "phoenix-aura" .}}
 <header class="site-header">
   <div class="header-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="/" aria-label="Neon AI Cloud home">
       <span class="brand-mark neon-panel">
-        <img src="/static/brand/neoncloudai-logo-simple-hq.png" alt="Neon AI Cloud" width="52" height="40">
-      </span>
-      <span class="brand-text">
-        <span class="brand-eyebrow">Neon AI Cloud</span>
-        <span class="brand-name">Infrastructure &amp; Platforms</span>
+        <img src="/static/brand/neoncloudai-logo-simple-hq.png" alt="Neon AI Cloud" width="160" height="128">
       </span>
     </a>
     <nav class="site-nav" aria-label="Primary">
@@ -46,13 +94,15 @@
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
-      <span class="brand-eyebrow">Neon AI Cloud</span>
-      <p class="footer-copy">Engineering-led AI infrastructure and platforms.</p>
+      <span class="brand-name brand-name-footer">Neon AI Cloud</span>
+      <p class="site-slogan site-slogan-footer">Engineering the Autonomous Enterprise</p>
+      <p class="footer-copy">A.I consulting, applications, infrastructure and platforms.</p>
     </div>
     <nav class="footer-nav" aria-label="Footer">
       <a href="/capabilities">Capabilities</a>
       <a href="/products">Products</a>
       <a href="/approach">Approach</a>
+      <a href="/blogs">Blogs</a>
       <a href="/about">About</a>
       <a href="/contact">Contact</a>
     </nav>

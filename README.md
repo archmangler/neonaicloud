@@ -40,6 +40,13 @@ START_FOREGROUND=1 ./scripts/start
 
 `PUBLIC_BASE_URL` sets absolute canonical, Open Graph, sitemap, and robots URLs. When unset, the request host is used.
 
+Blog publication links (override when accounts are final):
+
+```bash
+BLOG_SUBSTACK_URL=https://neonai.substack.com
+BLOG_MEDIUM_URL=https://medium.com/@neonaicloud
+```
+
 Logs and PID file are written under `bin/` (`bin/neonsite.log`, `bin/neonsite.pid`).
 
 ## CMS
@@ -111,6 +118,7 @@ Security response headers are applied on every response (`Content-Security-Polic
 | `/products` | Published products |
 | `/products/:slug` | Product detail |
 | `/approach` | Delivery approach |
+| `/blogs` | Substack and Medium publications |
 | `/about` | About |
 | `/contact` | Contact + digital twin chat |
 | `/admin` | CMS (auth required) |
