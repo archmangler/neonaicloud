@@ -729,6 +729,109 @@ textarea {
   cursor: not-allowed;
 }
 
+.admin-narrow {
+  max-width: 36rem;
+}
+
+.admin-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nav-button {
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.danger-chip {
+  color: hsl(0 80% 72%);
+  border-color: hsl(0 50% 35% / 0.55);
+  cursor: pointer;
+}
+
+.status-published {
+  color: hsl(var(--primary));
+}
+
+.status-draft {
+  color: hsl(var(--muted-foreground));
+}
+
+select {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  background: hsl(230 28% 6%);
+  color: hsl(var(--foreground));
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+}
+
+select:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.16);
+  outline: none;
+}
+
+.checkbox-grid {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.check-label input {
+  width: auto;
+}
+
+fieldset.field {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.prose h2,
+.prose h3 {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.prose p,
+.prose li {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.7;
+}
+
+.prose p {
+  margin: 0 0 0.9rem;
+}
+
+.prose ul {
+  margin: 0 0 0.9rem;
+  padding-left: 1.1rem;
+}
+
+.prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+input[readonly] {
+  opacity: 0.75;
+}
+
 @media (max-width: 960px) {
   .contact-layout {
     grid-template-columns: 1fr;

@@ -112,6 +112,28 @@
           </div>
         </section>
 
+        {{if .Products}}
+        <section class="section" aria-labelledby="products-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="products-heading">Products</h2>
+              <p class="section-intro muted">Published offerings from the product catalogue.</p>
+            </div>
+            <a class="chip" href="/products">View all</a>
+          </div>
+          <div class="grid-3">
+            {{range .Products}}
+            <a class="panel panel-link" href="/products/{{.Slug}}">
+              <p class="eyebrow">Product</p>
+              <h3 class="card-title">{{.Title}}</h3>
+              <p class="card-body">{{.Summary}}</p>
+              <p class="card-meta">Open product →</p>
+            </a>
+            {{end}}
+          </div>
+        </section>
+        {{end}}
+
         <section class="panel" aria-labelledby="cta-heading">
           <p class="eyebrow">Engage</p>
           <h2 class="section-title" id="cta-heading">Infrastructure, platforms, or embedded systems</h2>

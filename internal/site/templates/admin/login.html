@@ -1,0 +1,47 @@
+{{define "admin_login.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    <main class="site-main">
+      <div class="main-inner admin-narrow">
+        <header class="page-header">
+          <p class="eyebrow">CMS</p>
+          <h1>Admin login</h1>
+          <p class="lead">Sign in to manage product pages and media.</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <article class="panel">
+          {{if .FormError}}
+          <div class="panel status-panel error" style="margin-bottom: 1rem;">
+            <p class="card-body">{{.FormError}}</p>
+          </div>
+          {{end}}
+          <form class="contact-form" action="/admin/login" method="post">
+            <input type="hidden" name="next" value="{{.Next}}">
+            <div class="form-grid">
+              <label class="field">
+                <span class="form-label">Username</span>
+                <input name="username" autocomplete="username" required>
+              </label>
+              <label class="field">
+                <span class="form-label">Password</span>
+                <input name="password" type="password" autocomplete="current-password" required>
+              </label>
+            </div>
+            <div class="actions">
+              <button class="button-primary" type="submit">Enter</button>
+              <a class="chip" href="/">Back to site</a>
+            </div>
+          </form>
+        </article>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+{{end}}

@@ -1,0 +1,67 @@
+{{define "admin_media.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "admin_header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">CMS</p>
+          <h1>Media</h1>
+          <p class="lead">Upload assets for product pages. Public URL path is /media/…</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        {{if .Flash}}
+        <div class="panel status-panel">
+          <p class="card-body">{{.Flash}}</p>
+        </div>
+        {{end}}
+
+        <article class="panel">
+          <p class="eyebrow">Upload</p>
+          <h2 class="card-title">Add file</h2>
+          <form class="contact-form" action="/admin/media" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf" value="{{.CSRF}}">
+            <label class="field field-full">
+              <span class="form-label">File (max 10MB)</span>
+              <input name="file" type="file" required>
+            </label>
+            <div class="actions">
+              <button class="button-primary" type="submit">Upload</button>
+              <a class="chip" href="/admin">Products</a>
+            </div>
+          </form>
+        </article>
+
+        <section class="stack">
+          {{if .MediaFiles}}
+          {{range .MediaFiles}}
+          <article class="panel admin-row">
+            <div>
+              <h2 class="card-title">{{.Name}}</h2>
+              <p class="card-meta"><a href="{{.Path}}">{{.Path}}</a> · {{.Size}} bytes</p>
+            </div>
+            <form action="/admin/media/delete" method="post" onsubmit="return confirm('Delete {{.Name}}?');">
+              <input type="hidden" name="csrf" value="{{$.CSRF}}">
+              <input type="hidden" name="path" value="{{.Name}}">
+              <button class="chip danger-chip" type="submit">Delete</button>
+            </form>
+          </article>
+          {{end}}
+          {{else}}
+          <article class="panel">
+            <p class="card-body">No media uploaded yet.</p>
+          </article>
+          {{end}}
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+{{end}}

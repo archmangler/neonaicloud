@@ -1,0 +1,87 @@
+{{define "admin_product_form.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "admin_header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">CMS · Product</p>
+          <h1>{{if .IsNewProduct}}New product{{else}}Edit product{{end}}</h1>
+          <p class="lead">Markdown body supports headings, lists, bold, and links.</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        {{if .Flash}}
+        <div class="panel status-panel">
+          <p class="card-body">{{.Flash}}</p>
+        </div>
+        {{end}}
+        {{if .FormError}}
+        <div class="panel status-panel error">
+          <p class="card-body">{{.FormError}}</p>
+        </div>
+        {{end}}
+
+        <article class="panel">
+          <form class="contact-form" method="post" action="{{if .IsNewProduct}}/admin/products{{else}}/admin/products/{{.Product.Slug}}{{end}}">
+            <input type="hidden" name="csrf" value="{{.CSRF}}">
+            <div class="form-grid">
+              <label class="field field-full">
+                <span class="form-label">Title</span>
+                <input name="title" required value="{{.Product.Title}}">
+              </label>
+              <label class="field">
+                <span class="form-label">Slug</span>
+                <input name="slug" {{if not .IsNewProduct}}readonly{{end}} value="{{.Product.Slug}}" placeholder="auto-from-title-if-empty">
+              </label>
+              <label class="field">
+                <span class="form-label">Status</span>
+                <select name="status">
+                  <option value="draft" {{if eq .Product.Status "draft"}}selected{{end}}>draft</option>
+                  <option value="published" {{if eq .Product.Status "published"}}selected{{end}}>published</option>
+                </select>
+              </label>
+              <label class="field field-full">
+                <span class="form-label">Summary</span>
+                <input name="summary" value="{{.Product.Summary}}">
+              </label>
+              <label class="field">
+                <span class="form-label">Updated</span>
+                <input name="updated" value="{{.Product.Updated}}" placeholder="YYYY-MM-DD">
+              </label>
+              <fieldset class="field field-full">
+                <legend class="form-label">Capabilities</legend>
+                <div class="checkbox-grid">
+                  {{range .Capabilities}}
+                  <label class="check-label">
+                    <input type="checkbox" name="capabilities" value="{{.Slug}}" {{if hasCap $.Product.Capabilities .Slug}}checked{{end}}>
+                    <span>{{.Name}}</span>
+                  </label>
+                  {{end}}
+                </div>
+              </fieldset>
+              <label class="field field-full">
+                <span class="form-label">Body (Markdown)</span>
+                <textarea name="body" rows="16" placeholder="# Overview&#10;&#10;Product detail...">{{.Product.Body}}</textarea>
+              </label>
+            </div>
+            <div class="actions">
+              <button class="button-primary" type="submit">{{if .IsNewProduct}}Create{{else}}Save{{end}}</button>
+              <a class="chip" href="/admin">Back to list</a>
+              {{if and (not .IsNewProduct) (eq .Product.Status "published")}}
+              <a class="chip" href="/products/{{.Product.Slug}}" target="_blank" rel="noopener">View public page</a>
+              {{end}}
+            </div>
+          </form>
+        </article>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+{{end}}

@@ -1,0 +1,60 @@
+{{define "products.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Products</p>
+          <h1>Commercial offerings</h1>
+          <p class="lead">
+            Product pages are managed in the CMS. Only published entries appear here.
+          </p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="actions" aria-label="Filter by capability">
+          <a class="chip{{if not .CapabilityFilter}} nav-link-active{{end}}" href="/products">All</a>
+          {{range .Capabilities}}
+          <a class="chip{{if eq $.CapabilityFilter .Slug}} nav-link-active{{end}}" href="/products?capability={{.Slug}}">{{.Name}}</a>
+          {{end}}
+        </section>
+
+        {{if .Products}}
+        <section class="grid-2" aria-label="Products">
+          {{range .Products}}
+          <a class="panel panel-link" href="/products/{{.Slug}}">
+            <p class="eyebrow">Product</p>
+            <h2 class="card-title">{{.Title}}</h2>
+            <p class="card-body">{{.Summary}}</p>
+            {{if .Capabilities}}
+            <p class="card-meta">{{join .Capabilities " · "}}</p>
+            {{end}}
+          </a>
+          {{end}}
+        </section>
+        {{else}}
+        <article class="panel">
+          <p class="eyebrow">Status</p>
+          <h2 class="card-title">No published products</h2>
+          <p class="card-body">
+            {{if .CapabilityFilter}}
+            No published products are tagged with this capability yet.
+            {{else}}
+            Published product pages will appear here when available.
+            {{end}}
+          </p>
+        </article>
+        {{end}}
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

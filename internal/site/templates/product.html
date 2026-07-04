@@ -1,0 +1,53 @@
+{{define "product.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">Product</p>
+          <h1>{{.Product.Title}}</h1>
+          <p class="lead">{{.Product.Summary}}</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="detail-grid">
+          <article class="panel prose">
+            {{.ProductBody}}
+          </article>
+          <aside class="stack">
+            <article class="panel">
+              <p class="eyebrow">Capabilities</p>
+              <h2 class="card-title">Related modules</h2>
+              {{if .Product.Capabilities}}
+              <ul class="list">
+                {{range .Product.Capabilities}}
+                <li><a href="/capabilities/{{.}}">{{capName .}}</a></li>
+                {{end}}
+              </ul>
+              {{else}}
+              <p class="card-body">No capability tags.</p>
+              {{end}}
+            </article>
+            <article class="panel">
+              <p class="eyebrow">Updated</p>
+              <h2 class="card-title">{{.Product.Updated}}</h2>
+              <div class="actions" style="margin-top: 1rem;">
+                <a class="button-primary" href="/contact">Discuss this product</a>
+                <a class="chip" href="/products">All products</a>
+              </div>
+            </article>
+          </aside>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

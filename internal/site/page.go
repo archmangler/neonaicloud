@@ -1,5 +1,7 @@
 package site
 
+import "html/template"
+
 // NavItem is a primary navigation entry.
 type NavItem struct {
 	Href  string
@@ -7,33 +9,33 @@ type NavItem struct {
 	Key   string
 }
 
-// Page is the shared template context for every public page.
+// Page is the shared template context for public and admin pages.
 type Page struct {
-	Title       string
-	Description string
-	ActiveNav   string
-	Nav         []NavItem
+	Title        string
+	Description  string
+	ActiveNav    string
+	Nav          []NavItem
 	Capabilities []Capability
-	Capability  *Capability
-	ContactSent bool
-	ContactError string
-	FormName    string
-	FormEmail   string
-	FormOrg     string
-	FormMessage string
-}
+	Capability   *Capability
 
-func basePage(title, description, activeNav string) Page {
-	return Page{
-		Title:       title,
-		Description: description,
-		ActiveNav:   activeNav,
-		Nav: []NavItem{
-			{Href: "/capabilities", Label: "Capabilities", Key: "capabilities"},
-			{Href: "/approach", Label: "Approach", Key: "approach"},
-			{Href: "/about", Label: "About", Key: "about"},
-			{Href: "/contact", Label: "Contact", Key: "contact"},
-		},
-		Capabilities: Capabilities(),
-	}
+	Products         []Product
+	Product          *Product
+	ProductBody      template.HTML
+	CapabilityFilter string
+
+	ContactSent  bool
+	ContactError string
+	FormName     string
+	FormEmail    string
+	FormOrg      string
+	FormMessage  string
+
+	AdminEnabled bool
+	LoggedIn     bool
+	Flash        string
+	FormError    string
+	CSRF         string
+	Next         string
+	MediaFiles   []MediaFile
+	IsNewProduct bool
 }

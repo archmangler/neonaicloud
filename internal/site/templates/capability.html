@@ -53,6 +53,27 @@
           </article>
         </section>
 
+        {{if .Products}}
+        <section class="section" aria-labelledby="related-products">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="related-products">Related products</h2>
+              <p class="section-intro muted">Published offerings tagged to this capability.</p>
+            </div>
+            <a class="chip" href="/products?capability={{.Capability.Slug}}">All matching products</a>
+          </div>
+          <div class="grid-2">
+            {{range .Products}}
+            <a class="panel panel-link" href="/products/{{.Slug}}">
+              <p class="eyebrow">Product</p>
+              <h3 class="card-title">{{.Title}}</h3>
+              <p class="card-body">{{.Summary}}</p>
+            </a>
+            {{end}}
+          </div>
+        </section>
+        {{end}}
+
         <section class="panel">
           <p class="eyebrow">Next step</p>
           <h2 class="card-title">Engage on {{.Capability.Name}}</h2>

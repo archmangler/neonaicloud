@@ -10,10 +10,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/neonsit
 
 FROM gcr.io/distroless/static-debian12:nonroot
 
-COPY --from=builder /out/neonsite /neonsite
+COPY --from=builder --chown=nonroot:nonroot /out/neonsite /neonsite
+COPY --chown=nonroot:nonroot content /data/content
 
 ENV HTTP_ADDR=:8080
+ENV CONTENT_DIR=/data/content
 EXPOSE 8080
+VOLUME ["/data/content"]
 
 USER nonroot:nonroot
 ENTRYPOINT ["/neonsite"]

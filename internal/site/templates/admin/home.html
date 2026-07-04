@@ -1,0 +1,72 @@
+{{define "admin_home.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "admin_header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          <p class="eyebrow">CMS</p>
+          <h1>Products</h1>
+          <p class="lead">Create, edit, publish, and remove product pages.</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        {{if .Flash}}
+        <div class="panel status-panel">
+          <p class="card-body">{{.Flash}}</p>
+        </div>
+        {{end}}
+
+        <div class="section-heading">
+          <p class="section-intro muted">{{len .Products}} product(s) in the catalogue.</p>
+          <div class="actions">
+            <a class="button-primary" href="/admin/products/new">New product</a>
+            <a class="chip" href="/admin/media">Media</a>
+          </div>
+        </div>
+
+        {{if .Products}}
+        <section class="stack">
+          {{range .Products}}
+          <article class="panel admin-row">
+            <div>
+              <div class="panel-heading-row">
+                <h2 class="card-title">{{.Title}}</h2>
+                <span class="{{statusChip .Status}}">{{.Status}}</span>
+              </div>
+              <p class="card-body">{{.Summary}}</p>
+              <p class="card-meta">/products/{{.Slug}} · updated {{.Updated}}</p>
+            </div>
+            <div class="actions">
+              <a class="chip" href="/admin/products/{{.Slug}}/edit">Edit</a>
+              {{if eq .Status "published"}}
+              <a class="chip" href="/products/{{.Slug}}" target="_blank" rel="noopener">View</a>
+              {{end}}
+              <form action="/admin/products/{{.Slug}}/delete" method="post" onsubmit="return confirm('Delete {{.Slug}}?');">
+                <input type="hidden" name="csrf" value="{{$.CSRF}}">
+                <button class="chip danger-chip" type="submit">Delete</button>
+              </form>
+            </div>
+          </article>
+          {{end}}
+        </section>
+        {{else}}
+        <article class="panel">
+          <h2 class="card-title">No products yet</h2>
+          <p class="card-body">Create the first product page to populate the public catalogue.</p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/admin/products/new">New product</a>
+          </div>
+        </article>
+        {{end}}
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+{{end}}
