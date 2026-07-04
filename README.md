@@ -34,8 +34,11 @@ Optional:
 ```bash
 HTTP_ADDR=:3000 ./scripts/restart
 CONTENT_DIR=/var/lib/neonsite/content ./scripts/restart
+PUBLIC_BASE_URL=https://www.example.com ./scripts/restart
 START_FOREGROUND=1 ./scripts/start
 ```
+
+`PUBLIC_BASE_URL` sets absolute canonical, Open Graph, sitemap, and robots URLs. When unset, the request host is used.
 
 Logs and PID file are written under `bin/` (`bin/neonsite.log`, `bin/neonsite.pid`).
 
@@ -49,21 +52,6 @@ content/
   media/products/*
 ```
 
-Each product file uses YAML-like front matter:
-
-```markdown
----
-title: Edge Inference Platform
-slug: edge-inference-platform
-status: published
-summary: …
-capabilities: embedded-systems, ai-infrastructure
-updated: 2026-07-04
----
-
-Body in a small Markdown subset (#, ##, lists, **bold**, [links](/url)).
-```
-
 Admin capabilities:
 
 - Login (`ADMIN_USER` / `ADMIN_PASSWORD`, signed session cookie)
@@ -74,20 +62,44 @@ Admin capabilities:
 
 Only `published` products appear on `/products`, home, and capability pages.
 
+## SEO
+
+- Per-page title, description, canonical URL, robots
+- Open Graph and Twitter card tags
+- `/sitemap.xml` — static pages, capabilities, published products
+- `/robots.txt` — allows public routes, disallows `/admin`, points at the sitemap
+- Admin pages are `noindex, nofollow`
+
 ## Docker
+
+Hardened defaults: distroless static image, numeric non-root user (`65532`), no shell, dropped capabilities, read-only root filesystem (compose), `no-new-privileges`.
 
 ```bash
 docker build -t neonaicloud-site .
 docker run --rm -p 8080:8080 \
+  --read-only \
+  --tmpfs /tmp:size=16m,mode=1777 \
+  --security-opt no-new-privileges \
+  --cap-drop ALL \
+  --user 65532:65532 \
+  -e PUBLIC_BASE_URL=https://www.example.com \
   -e ADMIN_USER=admin \
   -e ADMIN_PASSWORD='choose-a-strong-password' \
   -v neonsite-content:/data/content \
   neonaicloud-site
 ```
 
-`CONTENT_DIR` defaults to `/data/content` in the image. Mount a volume to persist CMS edits.
+Or:
 
-Health check: `GET /healthz`
+```bash
+PUBLIC_BASE_URL=http://localhost:8080 \
+ADMIN_USER=admin ADMIN_PASSWORD='choose-a-strong-password' \
+docker compose up --build
+```
+
+Probe liveness externally with `GET /healthz` (the image has no shell for in-container healthchecks).
+
+Security response headers are applied on every response (`Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and `Strict-Transport-Security` when HTTPS is detected).
 
 ## Site map
 
@@ -103,6 +115,8 @@ Health check: `GET /healthz`
 | `/contact` | Contact + digital twin chat |
 | `/admin` | CMS (auth required) |
 | `/media/...` | Uploaded media |
+| `/sitemap.xml` | Sitemap |
+| `/robots.txt` | Robots |
 | `/healthz` | Liveness |
 
 ## Layout
@@ -113,6 +127,7 @@ Health check: `GET /healthz`
 | `internal/site` | HTTP handlers, CMS, templates, static assets |
 | `content/` | Product pages and media (CMS data) |
 | `scripts/` | Start / stop / restart control |
+| `docker-compose.yml` | Hardened local/prod-style run |
 | `bootstrap/` | Visual reference (CapOS aesthetic shipout) |
 | `guidelines/` | Design philosophy documents |
 

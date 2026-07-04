@@ -1,4 +1,4 @@
-# Build a static binary with no CGO, then ship a minimal runtime image.
+# Build a static binary with no CGO, then ship a minimal hardened runtime image.
 FROM golang:1.22-bookworm AS builder
 
 WORKDIR /src
@@ -6,17 +6,27 @@ COPY go.mod ./
 COPY cmd ./cmd
 COPY internal ./internal
 
-RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/neonsite ./cmd/neonsite
+RUN CGO_ENABLED=0 GOOS=linux \
+    go build -trimpath -ldflags="-s -w" -o /out/neonsite ./cmd/neonsite
 
+# Distroless static: no shell, no package manager, non-root by default.
 FROM gcr.io/distroless/static-debian12:nonroot
 
-COPY --from=builder --chown=nonroot:nonroot /out/neonsite /neonsite
-COPY --chown=nonroot:nonroot content /data/content
+LABEL org.opencontainers.image.title="Neon AI Cloud site" \
+      org.opencontainers.image.description="Corporate website and file-backed CMS" \
+      org.opencontainers.image.vendor="Neon AI Cloud"
 
-ENV HTTP_ADDR=:8080
-ENV CONTENT_DIR=/data/content
+COPY --from=builder --chown=65532:65532 /out/neonsite /neonsite
+COPY --chown=65532:65532 content /data/content
+
+ENV HTTP_ADDR=:8080 \
+    CONTENT_DIR=/data/content
+
+# Numeric non-root user (distroless nonroot).
+USER 65532:65532
+
 EXPOSE 8080
 VOLUME ["/data/content"]
 
-USER nonroot:nonroot
+# No shell in the image; orchestrators should probe GET /healthz externally.
 ENTRYPOINT ["/neonsite"]

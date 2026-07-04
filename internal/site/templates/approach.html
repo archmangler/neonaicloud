@@ -19,41 +19,77 @@
           <div class="system-line" role="presentation"></div>
         </header>
 
-        <section class="process grid-5" aria-label="Delivery loop">
-          <article class="panel process-step">
-            <p class="process-index">01 Discover</p>
-            <h2 class="card-title">Frame the problem</h2>
-            <p class="card-body">
-              Workloads, constraints, risk posture, and success criteria are captured before design begins.
-            </p>
+        {{template "proof-strip" .}}
+
+        <section class="section" aria-labelledby="loop-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="loop-heading">Closed delivery loop</h2>
+              <p class="section-intro muted">
+                Each engagement moves from framing to operable ownership. Validation is not a final gate—
+                it is continuous proof that the system meets its criteria.
+              </p>
+            </div>
+          </div>
+          <div class="process grid-5" aria-label="Delivery loop">
+            <article class="panel process-step">
+              <p class="process-index">01 Discover</p>
+              <h2 class="card-title">Frame the problem</h2>
+              <p class="card-body">
+                Workloads, constraints, risk posture, and success criteria are captured before design begins.
+              </p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">02 Design</p>
+              <h2 class="card-title">Architect with intent</h2>
+              <p class="card-body">
+                Interfaces, tenancy, operability, and failure modes are designed as first-class concerns.
+              </p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">03 Implement</p>
+              <h2 class="card-title">Build to criteria</h2>
+              <p class="card-body">
+                Delivery proceeds in measurable milestones with telemetry and ownership in mind.
+              </p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">04 Validate</p>
+              <h2 class="card-title">Prove readiness</h2>
+              <p class="card-body">
+                Behaviour, performance, resilience, and handover artefacts are validated with evidence.
+              </p>
+            </article>
+            <article class="panel process-step">
+              <p class="process-index">05 Operate</p>
+              <h2 class="card-title">Leave systems owned</h2>
+              <p class="card-body">
+                Runbooks, baselines, and clear ownership so platforms remain durable after engagement.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="detail-grid" aria-labelledby="validation-heading">
+          <article class="panel">
+            <p class="eyebrow">Validation</p>
+            <h2 class="card-title" id="validation-heading">What “done” must prove</h2>
+            <ul class="list">
+              <li>Acceptance criteria are explicit and testable.</li>
+              <li>Behaviour under expected load and failure modes is evidenced.</li>
+              <li>Operational telemetry and ownership boundaries are in place.</li>
+              <li>Handover artefacts allow the receiving team to run and evolve the system.</li>
+            </ul>
           </article>
-          <article class="panel process-step">
-            <p class="process-index">02 Design</p>
-            <h2 class="card-title">Architect with intent</h2>
-            <p class="card-body">
-              Interfaces, tenancy, operability, and failure modes are designed as first-class concerns.
-            </p>
-          </article>
-          <article class="panel process-step">
-            <p class="process-index">03 Implement</p>
-            <h2 class="card-title">Build to criteria</h2>
-            <p class="card-body">
-              Delivery proceeds in measurable milestones with telemetry and ownership in mind.
-            </p>
-          </article>
-          <article class="panel process-step">
-            <p class="process-index">04 Validate</p>
-            <h2 class="card-title">Prove readiness</h2>
-            <p class="card-body">
-              Behaviour, performance, resilience, and handover artefacts are validated with evidence.
-            </p>
-          </article>
-          <article class="panel process-step">
-            <p class="process-index">05 Operate</p>
-            <h2 class="card-title">Leave systems owned</h2>
-            <p class="card-body">
-              Runbooks, baselines, and clear ownership so platforms remain durable after engagement.
-            </p>
+          <article class="panel">
+            <p class="eyebrow">Evidence</p>
+            <h2 class="card-title">Artefacts we leave behind</h2>
+            <ul class="list">
+              <li>Architecture and interface contracts</li>
+              <li>Implementation baselines and configuration records</li>
+              <li>Validation plans and observed results</li>
+              <li>Runbooks, ownership maps, and operating limits</li>
+            </ul>
           </article>
         </section>
 

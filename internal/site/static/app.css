@@ -328,6 +328,14 @@ a {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.proof-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.proof-strip .stat-value {
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+}
+
 .grid-5 {
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 }
@@ -832,6 +840,12 @@ input[readonly] {
   opacity: 0.75;
 }
 
+@media (max-width: 1100px) {
+  .proof-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 960px) {
   .contact-layout {
     grid-template-columns: 1fr;
@@ -851,6 +865,7 @@ input[readonly] {
   .grid-2,
   .grid-3,
   .stats,
+  .proof-stats,
   .detail-grid,
   .form-grid {
     grid-template-columns: 1fr;

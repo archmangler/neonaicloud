@@ -3,6 +3,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{.Title}}</title>
 <meta name="description" content="{{.Description}}">
+<meta name="robots" content="{{.Robots}}">
+<link rel="canonical" href="{{.CanonicalURL}}">
+<meta name="theme-color" content="#070914">
+<meta property="og:type" content="{{.OGType}}">
+<meta property="og:site_name" content="{{.SiteName}}">
+<meta property="og:title" content="{{.Title}}">
+<meta property="og:description" content="{{.Description}}">
+<meta property="og:url" content="{{.CanonicalURL}}">
+<meta property="og:image" content="{{.OGImage}}">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{.Title}}">
+<meta name="twitter:description" content="{{.Description}}">
+<meta name="twitter:image" content="{{.OGImage}}">
 <link rel="icon" href="/static/favicon.ico" sizes="any">
 <link rel="stylesheet" href="/static/app.css">
 {{end}}
@@ -44,4 +58,39 @@
     </nav>
   </div>
 </footer>
+{{end}}
+
+{{define "proof-strip"}}
+<section class="section proof-strip" aria-labelledby="proof-heading">
+  <div class="section-heading">
+    <div>
+      <h2 class="section-title" id="proof-heading">Proof posture</h2>
+      <p class="section-intro muted">
+        Signals that describe how we work—not vanity metrics.
+      </p>
+    </div>
+  </div>
+  <div class="stats proof-stats">
+    <article class="stat neon-panel">
+      <p class="stat-label">Disciplines</p>
+      <p class="stat-value">5</p>
+      <p class="stat-detail">Applications, platforms, infrastructure, embedded, cloud</p>
+    </article>
+    <article class="stat neon-panel">
+      <p class="stat-label">Delivery loop</p>
+      <p class="stat-value">Design → Validate</p>
+      <p class="stat-detail">Architecture through implementation and proof</p>
+    </article>
+    <article class="stat neon-panel">
+      <p class="stat-label">Evidence</p>
+      <p class="stat-value">Acceptance-led</p>
+      <p class="stat-detail">Criteria, artefacts, and operable handover</p>
+    </article>
+    <article class="stat neon-panel">
+      <p class="stat-label">Positioning</p>
+      <p class="stat-value">Infrastructure-grade</p>
+      <p class="stat-detail">Built for organisations that depend on durable systems</p>
+    </article>
+  </div>
+</section>
 {{end}}

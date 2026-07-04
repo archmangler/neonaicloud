@@ -10,6 +10,7 @@ import (
 // Config holds runtime settings for the site and CMS.
 type Config struct {
 	ContentDir    string
+	PublicBaseURL string
 	AdminUser     string
 	AdminPassword string
 	SessionSecret string
@@ -19,6 +20,7 @@ type Config struct {
 func ConfigFromEnv() Config {
 	cfg := Config{
 		ContentDir:    envOr("CONTENT_DIR", "content"),
+		PublicBaseURL: strings.TrimSpace(os.Getenv("PUBLIC_BASE_URL")),
 		AdminUser:     strings.TrimSpace(os.Getenv("ADMIN_USER")),
 		AdminPassword: os.Getenv("ADMIN_PASSWORD"),
 		SessionSecret: strings.TrimSpace(os.Getenv("ADMIN_SESSION_SECRET")),

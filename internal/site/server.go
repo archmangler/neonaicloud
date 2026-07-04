@@ -67,6 +67,8 @@ func (s *Server) routes() {
 	s.mux.Handle("GET /static/", http.StripPrefix("/static/", s.static))
 	s.mux.Handle("GET /media/", s.media)
 	s.mux.HandleFunc("GET /healthz", s.handleHealthz)
+	s.mux.HandleFunc("GET /sitemap.xml", s.handleSitemap)
+	s.mux.HandleFunc("GET /robots.txt", s.handleRobots)
 
 	s.mux.HandleFunc("GET /{$}", s.handleHome)
 	s.mux.HandleFunc("GET /capabilities", s.handleCapabilities)
@@ -94,9 +96,9 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /admin/media/delete", s.requireAdmin(s.handleAdminMediaDelete))
 }
 
-// Handler returns the root HTTP handler.
+// Handler returns the root HTTP handler with security headers applied.
 func (s *Server) Handler() http.Handler {
-	return s.mux
+	return s.secureHeaders(s.mux)
 }
 
 func (s *Server) handleHealthz(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +121,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	} else {
 		page.Products = products
 	}
-	s.render(w, "home.html", page)
+	s.render(w, r, "home.html", page)
 }
 
 func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +130,7 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
 		"Service lines spanning AI applications, platforms, infrastructure, embedded systems, and cloud.",
 		"capabilities",
 	)
-	s.render(w, "capabilities.html", page)
+	s.render(w, r, "capabilities.html", page)
 }
 
 func (s *Server) handleCapability(w http.ResponseWriter, r *http.Request) {
@@ -155,7 +157,7 @@ func (s *Server) handleCapability(w http.ResponseWriter, r *http.Request) {
 		}
 		page.Products = related
 	}
-	s.render(w, "capability.html", page)
+	s.render(w, r, "capability.html", page)
 }
 
 func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
@@ -185,7 +187,7 @@ func (s *Server) handleProducts(w http.ResponseWriter, r *http.Request) {
 		products = filtered
 	}
 	page.Products = products
-	s.render(w, "products.html", page)
+	s.render(w, r, "products.html", page)
 }
 
 func (s *Server) handleProduct(w http.ResponseWriter, r *http.Request) {
@@ -198,7 +200,7 @@ func (s *Server) handleProduct(w http.ResponseWriter, r *http.Request) {
 	page := s.basePage(p.Title+" — Neon AI Cloud", p.Summary, "products")
 	page.Product = &p
 	page.ProductBody = RenderMarkdown(p.Body)
-	s.render(w, "product.html", page)
+	s.render(w, r, "product.html", page)
 }
 
 func (s *Server) handleApproach(w http.ResponseWriter, r *http.Request) {
@@ -207,7 +209,7 @@ func (s *Server) handleApproach(w http.ResponseWriter, r *http.Request) {
 		"How Neon AI Cloud designs, implements, and validates infrastructure and platforms.",
 		"approach",
 	)
-	s.render(w, "approach.html", page)
+	s.render(w, r, "approach.html", page)
 }
 
 func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {
@@ -216,7 +218,7 @@ func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {
 		"An engineering-led company specialising in AI infrastructure and the autonomous enterprise.",
 		"about",
 	)
-	s.render(w, "about.html", page)
+	s.render(w, r, "about.html", page)
 }
 
 func (s *Server) handleContactGet(w http.ResponseWriter, r *http.Request) {
@@ -225,7 +227,7 @@ func (s *Server) handleContactGet(w http.ResponseWriter, r *http.Request) {
 		"Engage Neon AI Cloud on infrastructure, platforms, applications, embedded systems, or cloud.",
 		"contact",
 	)
-	s.render(w, "contact.html", page)
+	s.render(w, r, "contact.html", page)
 }
 
 func (s *Server) handleDigitalTwin(w http.ResponseWriter, r *http.Request) {
@@ -234,7 +236,7 @@ func (s *Server) handleDigitalTwin(w http.ResponseWriter, r *http.Request) {
 		"Talk with a digital twin of the Neon AI Cloud C-suite. Agentic chatbot integration forthcoming.",
 		"contact",
 	)
-	s.render(w, "digital-twin.html", page)
+	s.render(w, r, "digital-twin.html", page)
 }
 
 func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
@@ -256,7 +258,7 @@ func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
 	if page.FormName == "" || page.FormEmail == "" || page.FormMessage == "" {
 		page.ContactError = "Name, email, and message are required."
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, "contact.html", page)
+		s.render(w, r, "contact.html", page)
 		return
 	}
 
@@ -266,7 +268,7 @@ func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
 	page.FormEmail = ""
 	page.FormOrg = ""
 	page.FormMessage = ""
-	s.render(w, "contact.html", page)
+	s.render(w, r, "contact.html", page)
 }
 
 func (s *Server) basePage(title, description, activeNav string) Page {
@@ -286,7 +288,8 @@ func (s *Server) basePage(title, description, activeNav string) Page {
 	}
 }
 
-func (s *Server) render(w http.ResponseWriter, name string, page Page) {
+func (s *Server) render(w http.ResponseWriter, r *http.Request, name string, page Page) {
+	page = s.applySEO(r, page)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := s.templates.ExecuteTemplate(w, name, page); err != nil {
 		log.Printf("render %s: %v", name, err)

@@ -46,6 +46,7 @@ func (s *Server) withAdmin(page Page, r *http.Request) Page {
 	page.AdminEnabled = s.auth.Enabled()
 	page.LoggedIn = s.auth.Authenticated(r)
 	page.CSRF = s.auth.CSRFToken(r)
+	page.NoIndex = true
 	return page
 }
 
@@ -60,8 +61,9 @@ func (s *Server) handleAdminLoginGet(w http.ResponseWriter, r *http.Request) {
 	}
 	page := s.basePage("Admin login — Neon AI Cloud", "CMS login", "")
 	page.Next = safeNext(r.URL.Query().Get("next"))
+	page.NoIndex = true
 	page = s.withAdmin(page, r)
-	s.render(w, "admin_login.html", page)
+	s.render(w, r, "admin_login.html", page)
 }
 
 func (s *Server) handleAdminLoginPost(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +84,7 @@ func (s *Server) handleAdminLoginPost(w http.ResponseWriter, r *http.Request) {
 		page.Next = next
 		page = s.withAdmin(page, r)
 		w.WriteHeader(http.StatusUnauthorized)
-		s.render(w, "admin_login.html", page)
+		s.render(w, r, "admin_login.html", page)
 		return
 	}
 	s.auth.StartSession(w, user)
@@ -105,7 +107,7 @@ func (s *Server) handleAdminHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	page.Products = products
-	s.render(w, "admin_home.html", page)
+	s.render(w, r, "admin_home.html", page)
 }
 
 func (s *Server) handleAdminProductNew(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +115,7 @@ func (s *Server) handleAdminProductNew(w http.ResponseWriter, r *http.Request) {
 	page = s.withAdmin(page, r)
 	page.IsNewProduct = true
 	page.Product = &Product{Status: StatusDraft, Updated: time.Now().UTC().Format("2006-01-02")}
-	s.render(w, "admin_product_form.html", page)
+	s.render(w, r, "admin_product_form.html", page)
 }
 
 func (s *Server) handleAdminProductCreate(w http.ResponseWriter, r *http.Request) {
@@ -133,19 +135,19 @@ func (s *Server) handleAdminProductCreate(w http.ResponseWriter, r *http.Request
 	if err := validateProduct(p); err != nil {
 		page.FormError = err.Error()
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, "admin_product_form.html", page)
+		s.render(w, r, "admin_product_form.html", page)
 		return
 	}
 	if s.store.Exists(p.Slug) {
 		page.FormError = "A product with this slug already exists."
 		w.WriteHeader(http.StatusConflict)
-		s.render(w, "admin_product_form.html", page)
+		s.render(w, r, "admin_product_form.html", page)
 		return
 	}
 	if err := s.store.Save(p); err != nil {
 		page.FormError = err.Error()
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, "admin_product_form.html", page)
+		s.render(w, r, "admin_product_form.html", page)
 		return
 	}
 	http.Redirect(w, r, "/admin?flash="+url.QueryEscape("Created "+p.Slug), http.StatusSeeOther)
@@ -162,7 +164,7 @@ func (s *Server) handleAdminProductEdit(w http.ResponseWriter, r *http.Request) 
 	page = s.withAdmin(page, r)
 	page.Product = &p
 	page.Flash = r.URL.Query().Get("flash")
-	s.render(w, "admin_product_form.html", page)
+	s.render(w, r, "admin_product_form.html", page)
 }
 
 func (s *Server) handleAdminProductUpdate(w http.ResponseWriter, r *http.Request) {
@@ -181,13 +183,13 @@ func (s *Server) handleAdminProductUpdate(w http.ResponseWriter, r *http.Request
 	if err := validateProduct(p); err != nil {
 		page.FormError = err.Error()
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, "admin_product_form.html", page)
+		s.render(w, r, "admin_product_form.html", page)
 		return
 	}
 	if err := s.store.Save(p); err != nil {
 		page.FormError = err.Error()
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, "admin_product_form.html", page)
+		s.render(w, r, "admin_product_form.html", page)
 		return
 	}
 	http.Redirect(w, r, "/admin/products/"+p.Slug+"/edit?flash="+url.QueryEscape("Saved"), http.StatusSeeOther)
@@ -213,7 +215,7 @@ func (s *Server) handleAdminMediaGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	page.MediaFiles = files
-	s.render(w, "admin_media.html", page)
+	s.render(w, r, "admin_media.html", page)
 }
 
 func (s *Server) handleAdminMediaUpload(w http.ResponseWriter, r *http.Request) {

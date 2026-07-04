@@ -38,4 +38,13 @@ type Page struct {
 	Next         string
 	MediaFiles   []MediaFile
 	IsNewProduct bool
+
+	// SEO
+	Path         string
+	CanonicalURL string
+	SiteName     string
+	OGType       string
+	OGImage      string
+	Robots       string
+	NoIndex      bool
 }

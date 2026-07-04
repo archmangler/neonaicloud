@@ -1,0 +1,27 @@
+services:
+  site:
+    build: .
+    image: neonaicloud-site:local
+    ports:
+      - "8080:8080"
+    environment:
+      HTTP_ADDR: ":8080"
+      CONTENT_DIR: /data/content
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-}
+    volumes:
+      - site-content:/data/content
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777,uid=65532,gid=65532
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65532:65532"
+    restart: unless-stopped
+
+volumes:
+  site-content:
