@@ -1,66 +1,56 @@
 {{define "twin-console"}}
 {{/*
-  Integration surface for the agentic chatbot.
-  Mount the agent into #csuite-digital-twin when ready.
+  Digital twin chat console. JS in /static/twin-chat.js calls same-origin
+  /api/twin/* routes proxied by neonsite to the Python twin service.
 */}}
 <section
   id="csuite-digital-twin"
   class="twin-console neon-panel"
   data-agent-slot="csuite-digital-twin"
-  data-agent-status="pending"
+  data-agent-status="connecting"
+  data-persona="cto"
+  data-health-url="/api/twin/health?persona=cto"
+  data-chat-url="/api/twin/chat"
   aria-label="C-suite digital twin chat"
 >
   <div class="twin-console-header">
     <div class="twin-console-identity">
-      <span class="twin-avatar" aria-hidden="true">NA</span>
+      <span class="twin-avatar" aria-hidden="true">CTO</span>
       <div>
         <p class="eyebrow">Digital twin</p>
-        <h2 class="card-title">C-suite channel</h2>
+        <h2 class="card-title">Chief Technology Officer</h2>
       </div>
     </div>
     <div class="twin-console-meta">
       <span class="twin-presence">
         <span class="twin-presence-dot" aria-hidden="true"></span>
-        Standby
+        <span class="twin-presence-label">Connecting</span>
       </span>
-      <span class="chip status-chip">Agent pending</span>
+      <span class="chip status-chip">Connecting</span>
     </div>
   </div>
 
   <div class="twin-console-body" role="log" aria-live="polite" aria-relevant="additions">
-    <div class="twin-message twin-message-assistant">
+    <div class="twin-message twin-message-assistant" data-static="true">
       <div class="twin-message-meta">
-        <span class="twin-avatar twin-avatar-sm" aria-hidden="true">NA</span>
-        <p class="twin-message-label">C-suite twin</p>
+        <span class="twin-avatar twin-avatar-sm" aria-hidden="true">CTO</span>
+        <p class="twin-message-label">Digital twin</p>
       </div>
       <div class="twin-bubble">
         <p>
-          I represent Neon AI Cloud leadership on infrastructure, platforms, and engagement fit.
+          I represent Neon AI Cloud on architecture, platforms, AI infrastructure, and engagement fit.
           Ask about our capabilities, how we work, or whether we are the right partner for your programme.
         </p>
       </div>
     </div>
 
-    <div class="twin-message twin-message-assistant">
-      <div class="twin-message-meta">
-        <span class="twin-avatar twin-avatar-sm" aria-hidden="true">NA</span>
-        <p class="twin-message-label">C-suite twin</p>
-      </div>
-      <div class="twin-bubble">
-        <p>
-          The live agent is not connected yet. This window is the chat surface that will host that conversation.
-          Until then, use the enquiry form for a formal response.
-        </p>
-      </div>
-    </div>
-
-    <div class="twin-message twin-message-system">
+    <div class="twin-message twin-message-system" data-static="true">
       <p class="twin-message-label">System</p>
-      <p class="twin-system-text">Agentic chatbot integration pending. Composer remains locked.</p>
+      <p class="twin-system-text">Connecting to the live agent…</p>
     </div>
   </div>
 
-  <form class="twin-composer" action="#" method="post" aria-disabled="true" onsubmit="return false;">
+  <form class="twin-composer" action="#" method="post" aria-disabled="true">
     <label class="twin-composer-field" for="twin-message-input">
       <span class="visually-hidden">Message to C-suite digital twin</span>
       <textarea
@@ -68,16 +58,17 @@
         name="message"
         rows="3"
         disabled
-        placeholder="Message the C-suite digital twin…"
+        placeholder="Connecting to digital twin…"
         aria-describedby="twin-composer-note"
       ></textarea>
     </label>
     <div class="twin-composer-row">
       <p id="twin-composer-note" class="muted twin-composer-note">
-        Chat input unlocks when the agent connects.
+        Checking digital twin availability…
       </p>
       <button class="button-primary" type="submit" disabled>Send</button>
     </div>
   </form>
 </section>
+<script src="/static/twin-chat.js" defer></script>
 {{end}}

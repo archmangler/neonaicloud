@@ -1,0 +1,7 @@
+requests
+python-dotenv
+gradio>=6.0
+pypdf
+openai
+fastapi
+uvicorn[standard]
