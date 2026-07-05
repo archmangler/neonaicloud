@@ -12,6 +12,7 @@
   --border: 235 32% 24%;
   --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   --max-width: 72rem;
+  --labyrinth-cycle: 32s;
 }
 
 *,
@@ -58,135 +59,123 @@ a {
   flex-direction: column;
 }
 
-.phoenix-aura {
+.labyrinth-aura {
   position: fixed;
   inset: 0 auto 0 0;
   width: min(42vw, 34rem);
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  opacity: 0.42;
+  opacity: 0.44;
   mask-image: linear-gradient(90deg, #000 0%, #000 58%, transparent 100%);
   -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 58%, transparent 100%);
 }
 
-.phoenix-aura-svg {
+.labyrinth-aura-svg {
   position: absolute;
-  left: -6%;
-  top: 4%;
-  width: 130%;
-  height: 92vh;
-  min-height: 40rem;
-  animation: phoenix-drift 12s ease-in-out infinite;
+  left: -8%;
+  top: 2%;
+  width: 135%;
+  height: 94vh;
+  min-height: 42rem;
+  animation: labyrinth-drift var(--labyrinth-cycle) ease-in-out infinite;
 }
 
-.phoenix-field {
-  opacity: 0.55;
+.labyrinth-field {
+  opacity: 0.35;
 }
 
-.phoenix-mark {
-  animation: phoenix-pulse 5s ease-in-out infinite;
-  transform-origin: 130px 150px;
+.labyrinth-orbit {
+  fill: none;
+  stroke-dasharray: 10 18;
+  transform-origin: 100px 100px;
+  transform-box: view-box;
 }
 
-.phoenix-trace {
-  stroke-dasharray: 8 14;
-  animation: phoenix-current 7s linear infinite;
+.labyrinth-orbit-a {
+  animation: labyrinth-orbit-spin 140s linear infinite;
 }
 
-.phoenix-trace-b {
-  animation-duration: 9s;
-  animation-direction: reverse;
+.labyrinth-orbit-b {
+  animation: labyrinth-orbit-spin 180s linear infinite reverse;
+  opacity: 0.65;
 }
 
-.phoenix-trace-c {
-  animation-duration: 5.5s;
+.labyrinth-trace {
+  stroke-dasharray: 6 12;
+  opacity: 0.35;
 }
 
-.phoenix-wing {
-  stroke-dasharray: 120;
-  stroke-dashoffset: 0;
-  animation: phoenix-wing-flow 6s ease-in-out infinite;
+.labyrinth-structure {
+  transform-origin: 100px 100px;
 }
 
-.phoenix-wing-b {
-  animation-delay: 0.3s;
+.labyrinth-ring {
+  transform-origin: 100px 100px;
+  transform-box: view-box;
+  animation: labyrinth-ring-spin var(--ring-duration, 60s) linear infinite;
+  animation-direction: var(--ring-direction, normal);
 }
 
-.phoenix-wing-c {
-  animation-delay: 0.6s;
+.labyrinth-wall {
+  fill: none;
 }
 
-.phoenix-node {
-  animation: phoenix-node-glow 3s ease-in-out infinite;
+.labyrinth-hub {
+  transform-origin: 100px 100px;
 }
 
-.phoenix-node:nth-child(odd) {
-  animation-delay: 0.45s;
+@keyframes labyrinth-ring-spin {
+  from {
+    transform: rotate(var(--ring-offset, 0deg));
+  }
+
+  to {
+    transform: rotate(calc(var(--ring-offset, 0deg) + 360deg));
+  }
 }
 
-@keyframes phoenix-drift {
+@keyframes labyrinth-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes labyrinth-drift {
   0%,
   100% {
     transform: translate3d(0, 0, 0) scale(1);
   }
-  50% {
-    transform: translate3d(0, -1.5%, 0) scale(1.02);
-  }
-}
 
-@keyframes phoenix-pulse {
-  0%,
-  100% {
-    opacity: 0.88;
-  }
   50% {
-    opacity: 1;
-  }
-}
-
-@keyframes phoenix-current {
-  to {
-    stroke-dashoffset: -120;
-  }
-}
-
-@keyframes phoenix-wing-flow {
-  0%,
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0.85;
-  }
-  50% {
-    stroke-dashoffset: -24;
-    opacity: 1;
-  }
-}
-
-@keyframes phoenix-node-glow {
-  0%,
-  100% {
-    opacity: 0.65;
-  }
-  50% {
-    opacity: 1;
+    transform: translate3d(0, -0.6%, 0) scale(1.004);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phoenix-aura-svg,
-  .phoenix-mark,
-  .phoenix-trace,
-  .phoenix-wing,
-  .phoenix-node {
+  .labyrinth-aura-svg,
+  .labyrinth-orbit,
+  .labyrinth-ring {
     animation: none;
+  }
+
+  .labyrinth-ring {
+    transform: rotate(var(--ring-offset, 0deg));
+  }
+
+  .labyrinth-field {
+    opacity: 0.08;
   }
 }
 
 @media (max-width: 860px) {
-  .phoenix-aura {
+  .labyrinth-aura {
     width: min(52vw, 18rem);
-    opacity: 0.28;
+    opacity: 0.3;
   }
 }
 
