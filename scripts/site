@@ -291,6 +291,27 @@ wait_healthy() {
   return 1
 }
 
+load_env() {
+  if [[ -f "$ROOT/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    source "$ROOT/.env"
+    set +a
+  fi
+}
+
+resolve_twin_url() {
+  TWIN_HTTP_HOST="${TWIN_HTTP_HOST:-127.0.0.1}"
+  TWIN_HTTP_PORT="${TWIN_HTTP_PORT:-7861}"
+  if [[ -z "${TWIN_SERVICE_URL:-}" ]]; then
+    if curl -fsS --max-time 2 "http://${TWIN_HTTP_HOST}:${TWIN_HTTP_PORT}/health" >/dev/null 2>&1; then
+      TWIN_SERVICE_URL="http://${TWIN_HTTP_HOST}:${TWIN_HTTP_PORT}"
+      echo "Twin API detected at $TWIN_SERVICE_URL"
+    fi
+  fi
+  export TWIN_SERVICE_URL
+}
+
 start_site() {
   # Always clear first so start never stacks listeners or stale embeds.
   stop_site
@@ -313,13 +334,23 @@ start_site() {
 
   echo "Starting $BIN (HTTP_ADDR=$HTTP_ADDR)..."
 
-  if [[ "$START_FOREGROUND" == "1" ]]; then
-    export HTTP_ADDR
-    echo $$ >"$PID_FILE"
-    exec env HTTP_ADDR="$HTTP_ADDR" "$BIN"
+  load_env
+  resolve_twin_url
+
+  local -a start_env=(HTTP_ADDR="$HTTP_ADDR")
+  if [[ -n "${TWIN_SERVICE_URL:-}" ]]; then
+    start_env+=(TWIN_SERVICE_URL="$TWIN_SERVICE_URL")
+  fi
+  if [[ -n "${TWIN_DEFAULT_PERSONA:-}" ]]; then
+    start_env+=(TWIN_DEFAULT_PERSONA="$TWIN_DEFAULT_PERSONA")
   fi
 
-  env HTTP_ADDR="$HTTP_ADDR" "$BIN" >>"$LOG_FILE" 2>&1 &
+  if [[ "$START_FOREGROUND" == "1" ]]; then
+    echo $$ >"$PID_FILE"
+    exec env "${start_env[@]}" "$BIN"
+  fi
+
+  env "${start_env[@]}" "$BIN" >>"$LOG_FILE" 2>&1 &
   local pid=$!
   echo "$pid" >"$PID_FILE"
 
@@ -343,6 +374,11 @@ start_site() {
   echo "Started pid $pid"
   echo "URL:     $(base_url)/"
   echo "Health:  $(base_url)$HEALTH_PATH"
+  if [[ -n "${TWIN_SERVICE_URL:-}" ]]; then
+    echo "Twin:    $TWIN_SERVICE_URL"
+  else
+    echo "Twin:    not configured (./scripts/twin start, then ./scripts/site restart)"
+  fi
   echo "Log:     $LOG_FILE"
   echo "PID file:$PID_FILE"
 }
