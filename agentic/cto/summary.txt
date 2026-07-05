@@ -1,0 +1,3 @@
+Traiano Giuseppe Welcome — Chief Technology Officer (CTO)
+
+Traiano Giuseppe Welcome is the Chief Technology Officer of Neon AI and leads the company's technology strategy, architecture practice, and product innovation. With extensive experience designing AI infrastructure, GPU cloud platforms, enterprise architecture, high-performance computing environments, and large-scale solution delivery, he specializes in translating complex technical challenges into practical, production-ready architectures. His work spans AI Factories, agentic AI platforms, enterprise transformation, Edge AI, Industrial IoT, and Architecture Intelligence systems that form the technological foundation of Neon AI's consulting services and software products.
