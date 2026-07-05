@@ -25,55 +25,79 @@
 <p class="site-slogan">Engineering the Autonomous Enterprise</p>
 {{end}}
 
-{{define "phoenix-aura"}}
-<div class="phoenix-aura" aria-hidden="true">
-  <svg class="phoenix-aura-svg" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+{{define "labyrinth-aura"}}
+<div class="labyrinth-aura" aria-hidden="true">
+  <svg class="labyrinth-aura-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="phoenix-stroke" x1="40" y1="40" x2="200" y2="280" gradientUnits="userSpaceOnUse">
-        <stop stop-color="hsl(233 100% 78%)" stop-opacity="1"/>
-        <stop offset="0.55" stop-color="hsl(263 92% 78%)" stop-opacity="0.95"/>
-        <stop offset="1" stop-color="hsl(233 100% 72%)" stop-opacity="0.8"/>
+      <linearGradient id="labyrinth-stroke" x1="20" y1="20" x2="180" y2="180" gradientUnits="userSpaceOnUse">
+        <stop stop-color="hsl(233 100% 98%)" stop-opacity="1"/>
+        <stop offset="0.55" stop-color="hsl(263 92% 98%)" stop-opacity="1"/>
+        <stop offset="1" stop-color="hsl(233 100% 90%)" stop-opacity="1"/>
       </linearGradient>
-      <filter id="phoenix-glow" x="-40%" y="-40%" width="180%" height="180%">
-        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+      <radialGradient id="labyrinth-hub-glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="hsl(263 92% 98%)" stop-opacity="1"/>
+        <stop offset="100%" stop-color="hsl(233 100% 90%)" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="labyrinth-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2.8" result="blur"/>
         <feMerge>
           <feMergeNode in="blur"/>
           <feMergeNode in="SourceGraphic"/>
         </feMerge>
       </filter>
     </defs>
-    <!-- Circuit field -->
-    <g class="phoenix-field" stroke="url(#phoenix-stroke)" stroke-width="1.15">
-      <path class="phoenix-trace phoenix-trace-a" d="M24 48 H72 M72 48 V96 M72 96 H120"/>
-      <path class="phoenix-trace phoenix-trace-b" d="M36 280 H96 M96 280 V220 M96 220 H148"/>
-      <path class="phoenix-trace phoenix-trace-c" d="M12 160 H56 M56 160 V120"/>
-      <circle cx="72" cy="48" r="2.2" fill="url(#phoenix-stroke)"/>
-      <circle cx="72" cy="96" r="2.2" fill="url(#phoenix-stroke)"/>
-      <circle cx="96" cy="280" r="2.2" fill="url(#phoenix-stroke)"/>
-      <circle cx="96" cy="220" r="2.2" fill="url(#phoenix-stroke)"/>
-      <circle cx="56" cy="160" r="2.2" fill="url(#phoenix-stroke)"/>
+
+    <!-- Ambient circuit traces -->
+    <g class="labyrinth-field" stroke="url(#labyrinth-stroke)" stroke-width="1" opacity="0.45">
+      <circle class="labyrinth-orbit labyrinth-orbit-a" cx="100" cy="100" r="94"/>
+      <circle class="labyrinth-orbit labyrinth-orbit-b" cx="100" cy="100" r="72"/>
+      <path class="labyrinth-trace" d="M8 100 H36 M164 100 H192"/>
+      <path class="labyrinth-trace labyrinth-trace-b" d="M100 8 V36 M100 164 V192"/>
     </g>
-    <!-- Electric phoenix -->
-    <g class="phoenix-mark" filter="url(#phoenix-glow)" stroke="url(#phoenix-stroke)" stroke-linecap="round" stroke-linejoin="round">
-      <path class="phoenix-body" d="M118 36 C136 72 144 118 136 168 C128 214 104 252 84 288" stroke-width="2.8"/>
-      <path class="phoenix-head" d="M118 36 L152 18 L140 54" stroke-width="2.5"/>
-      <path class="phoenix-beak" d="M152 18 L176 26" stroke-width="2.3"/>
-      <path class="phoenix-wing phoenix-wing-a" d="M126 88 L204 64" stroke-width="2.4"/>
-      <path class="phoenix-wing phoenix-wing-b" d="M124 118 L214 104" stroke-width="2.4"/>
-      <path class="phoenix-wing phoenix-wing-c" d="M120 148 L208 152" stroke-width="2.4"/>
-      <path class="phoenix-tail" d="M84 288 L62 312 M84 288 L90 318 M84 288 L108 314" stroke-width="2.1"/>
-      <circle class="phoenix-node" cx="204" cy="64" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
-      <circle class="phoenix-node" cx="214" cy="104" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
-      <circle class="phoenix-node" cx="208" cy="152" r="3.4" fill="url(#phoenix-stroke)" stroke="none"/>
-      <circle class="phoenix-node" cx="176" cy="26" r="2.8" fill="url(#phoenix-stroke)" stroke="none"/>
-      <circle class="phoenix-node" cx="84" cy="288" r="3" fill="url(#phoenix-stroke)" stroke="none"/>
+
+    <!-- 7-circuit circular maze — walls rotate on concentric rings -->
+    <g class="labyrinth-structure" filter="url(#labyrinth-glow)" stroke="url(#labyrinth-stroke)" stroke-width="2.5" stroke-linecap="round">
+      <g class="labyrinth-ring labyrinth-ring-0" style="--ring-duration: 56s; --ring-offset: 0deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 80.65 183.80 A 86.00 86.00 0 1 1 119.35 183.80"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-1" style="--ring-duration: 44s; --ring-offset: 18deg; --ring-direction: reverse;">
+        <path class="labyrinth-wall" d="M 173.00 116.85 A 74.92 74.92 0 1 1 173.00 83.15"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-2" style="--ring-duration: 68s; --ring-offset: -12deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 37.79 85.64 A 63.85 63.85 0 1 1 37.79 114.36"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-3" style="--ring-duration: 52s; --ring-offset: 24deg; --ring-direction: reverse;">
+        <path class="labyrinth-wall" d="M 151.42 111.87 A 52.77 52.77 0 1 1 151.42 88.13"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-4" style="--ring-duration: 60s; --ring-offset: -8deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 59.38 90.62 A 41.69 41.69 0 1 1 59.38 109.38"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-5" style="--ring-duration: 48s; --ring-offset: 15deg; --ring-direction: reverse;">
+        <path class="labyrinth-wall" d="M 129.83 106.89 A 30.62 30.62 0 1 1 129.83 93.11"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-ring-6" style="--ring-duration: 72s; --ring-offset: -20deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 80.96 95.60 A 19.54 19.54 0 1 1 80.96 104.40"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-radial-0" style="--ring-duration: 44s; --ring-offset: 18deg; --ring-direction: reverse;">
+        <path class="labyrinth-wall" d="M 47.23 100.00 L 25.08 100.00"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-radial-1" style="--ring-duration: 52s; --ring-offset: 24deg; --ring-direction: reverse;">
+        <path class="labyrinth-wall" d="M 69.38 100.00 L 47.23 100.00"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-radial-2" style="--ring-duration: 68s; --ring-offset: -12deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 141.69 100.00 L 163.85 100.00"/>
+      </g>
+      <g class="labyrinth-ring labyrinth-radial-3" style="--ring-duration: 60s; --ring-offset: -8deg; --ring-direction: normal;">
+        <path class="labyrinth-wall" d="M 119.54 100.00 L 141.69 100.00"/>
+      </g>
+      <circle class="labyrinth-hub" cx="100" cy="100" r="8" fill="url(#labyrinth-hub-glow)" stroke="url(#labyrinth-stroke)" stroke-width="1"/>
     </g>
   </svg>
 </div>
 {{end}}
 
 {{define "header"}}
-{{template "phoenix-aura" .}}
+{{template "labyrinth-aura" .}}
 <header class="site-header">
   <div class="header-inner">
     <a class="brand" href="/" aria-label="Neon AI Cloud home">
