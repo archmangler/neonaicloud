@@ -172,8 +172,14 @@
         }
       })
       .catch(function (err) {
-        setStatus("unavailable", err.message || "Digital twin is unavailable. Use the enquiry form.");
+        removeStaticMessages();
+        var message = err.message || "Digital twin is unavailable. Use the enquiry form.";
+        appendMessage("system", "System", message);
+        setStatus("unavailable", message);
         setComposerEnabled(false);
+        if (inputEl) {
+          inputEl.placeholder = "Digital twin unavailable";
+        }
       });
   }
 

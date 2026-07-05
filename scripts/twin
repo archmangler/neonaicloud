@@ -135,7 +135,17 @@ start_twin() {
   echo "Started pid $pid"
   echo "Health: $(health_url)"
   echo "Log:    $LOG_FILE"
-  echo "Site:   export TWIN_SERVICE_URL=http://$TWIN_HTTP_HOST:$TWIN_HTTP_PORT"
+  local twin_url="http://$TWIN_HTTP_HOST:$TWIN_HTTP_PORT"
+  echo "Site:   TWIN_SERVICE_URL=$twin_url ./scripts/site restart"
+
+  local site_pid=""
+  if [[ -f "$ROOT/bin/neonsite.pid" ]]; then
+    site_pid="$(tr -d '[:space:]' <"$ROOT/bin/neonsite.pid" || true)"
+  fi
+  if [[ -n "$site_pid" ]] && kill -0 "$site_pid" 2>/dev/null; then
+    echo "Site is running — restarting with TWIN_SERVICE_URL=$twin_url ..."
+    TWIN_SERVICE_URL="$twin_url" "$ROOT/scripts/site" restart
+  fi
 }
 
 status_twin() {
