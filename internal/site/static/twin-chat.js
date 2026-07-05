@@ -6,10 +6,14 @@
     return;
   }
 
-  var persona = root.dataset.persona || "cto";
-  var healthURL = root.dataset.healthUrl || "/api/twin/health?persona=" + encodeURIComponent(persona);
+  var defaultPersona = root.dataset.persona || "cto";
+  var showPicker = root.dataset.showPicker === "true";
+  var healthBase = root.dataset.healthUrl || "/api/twin/health";
   var chatURL = root.dataset.chatUrl || "/api/twin/chat";
-  var history = [];
+  var persona = defaultPersona;
+  var histories = {};
+  var personaMeta = {};
+  var probedPersonas = {};
 
   var bodyEl = root.querySelector(".twin-console-body");
   var formEl = root.querySelector(".twin-composer");
@@ -20,6 +24,44 @@
   var presenceLabel = root.querySelector(".twin-presence-label");
   var presenceDot = root.querySelector(".twin-presence-dot");
   var labelEl = root.querySelector(".twin-console-identity .card-title");
+  var avatarEl = root.querySelector(".twin-console-identity .twin-avatar");
+  var pickerEl = root.querySelector(".twin-persona-picker");
+  var pickerButtons = pickerEl
+    ? Array.prototype.slice.call(pickerEl.querySelectorAll(".twin-persona-chip"))
+    : [];
+
+  function personaFromQuery() {
+    var params = new URLSearchParams(window.location.search);
+    var value = (params.get("persona") || "").trim().toLowerCase();
+    return value || null;
+  }
+
+  function personaConfig(id) {
+    var button = pickerButtons.find(function (btn) {
+      return btn.dataset.persona === id;
+    });
+    if (button) {
+      return {
+        id: id,
+        initials: button.dataset.initials || id.toUpperCase(),
+        label: button.dataset.label || id,
+        intro: button.dataset.intro || "",
+      };
+    }
+    return {
+      id: id,
+      initials: root.dataset.twinInitials || id.toUpperCase(),
+      label: root.dataset.twinLabel || id,
+      intro: root.dataset.twinIntro || "",
+    };
+  }
+
+  function getHistory(id) {
+    if (!histories[id]) {
+      histories[id] = [];
+    }
+    return histories[id];
+  }
 
   function escapeHTML(value) {
     return String(value)
@@ -39,7 +81,9 @@
       .join("");
   }
 
-  function appendMessage(role, label, text, extraClass) {
+  function appendMessage(role, label, text, extraClass, options) {
+    options = options || {};
+    var config = personaConfig(persona);
     var wrap = document.createElement("div");
     wrap.className = "twin-message twin-message-" + role + (extraClass ? " " + extraClass : "");
 
@@ -48,10 +92,10 @@
         '<p class="twin-message-label">System</p>' +
         '<p class="twin-system-text">' + escapeHTML(text) + "</p>";
     } else {
-      var initials = role === "user" ? "You" : "CTO";
+      var initials = role === "user" ? "You" : config.initials;
       wrap.innerHTML =
         '<div class="twin-message-meta">' +
-        '<span class="twin-avatar twin-avatar-sm" aria-hidden="true">' + initials + "</span>" +
+        '<span class="twin-avatar twin-avatar-sm" aria-hidden="true">' + escapeHTML(initials) + "</span>" +
         '<p class="twin-message-label">' + escapeHTML(label) + "</p>" +
         "</div>" +
         '<div class="twin-bubble">' +
@@ -61,6 +105,11 @@
 
     bodyEl.appendChild(wrap);
     bodyEl.scrollTop = bodyEl.scrollHeight;
+
+    if (!options.skipHistory && !extraClass) {
+      getHistory(persona).push({ role: role, label: label, text: text });
+    }
+
     return wrap;
   }
 
@@ -86,12 +135,13 @@
         statusChip.textContent = "Connecting";
         statusChip.className = "chip status-chip";
       } else {
-        statusChip.textContent = "Unavailable";
+        statusChip.textContent = "Standby";
         statusChip.className = "chip status-chip status-draft";
       }
     }
     if (presenceLabel) {
-      presenceLabel.textContent = state === "connected" ? "Online" : state === "connecting" ? "Connecting" : "Standby";
+      presenceLabel.textContent =
+        state === "connected" ? "Online" : state === "connecting" ? "Connecting" : "Standby";
     }
     if (presenceDot) {
       presenceDot.classList.toggle("twin-presence-dot-online", state === "connected");
@@ -101,10 +151,28 @@
     }
   }
 
-  function removeStaticMessages() {
-    root.querySelectorAll('[data-static="true"]').forEach(function (node) {
-      node.remove();
+  function setChipStatus(id, state) {
+    var button = pickerButtons.find(function (btn) {
+      return btn.dataset.persona === id;
     });
+    if (!button) {
+      return;
+    }
+    button.dataset.twinStatus = state;
+    var statusEl = button.querySelector(".twin-chip-status");
+    if (!statusEl) {
+      return;
+    }
+    if (state === "online") {
+      statusEl.textContent = "Online";
+      statusEl.className = "twin-chip-status twin-chip-status-online";
+    } else if (state === "connecting") {
+      statusEl.textContent = "…";
+      statusEl.className = "twin-chip-status";
+    } else {
+      statusEl.textContent = "Standby";
+      statusEl.className = "twin-chip-status twin-chip-status-standby";
+    }
   }
 
   function parseJSON(response) {
@@ -142,11 +210,73 @@
     return "Request failed.";
   }
 
-  function connect() {
-    setStatus("connecting", "Checking digital twin availability…");
-    setComposerEnabled(false);
+  function healthURL(id) {
+    return healthBase + "?persona=" + encodeURIComponent(id);
+  }
 
-    fetch(healthURL, {
+  function renderHistory(id) {
+    bodyEl.innerHTML = "";
+    getHistory(id).forEach(function (message) {
+      appendMessage(message.role, message.label, message.text, null, { skipHistory: true });
+    });
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+  }
+
+  function updateIdentity(id) {
+    var config = personaConfig(id);
+    if (labelEl) {
+      labelEl.textContent = personaMeta[id] && personaMeta[id].name ? personaMeta[id].name : config.label;
+    }
+    if (avatarEl) {
+      avatarEl.textContent = config.initials;
+    }
+  }
+
+  function updatePickerSelection(id) {
+    pickerButtons.forEach(function (button) {
+      var active = button.dataset.persona === id;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+  }
+
+  function applyConnectedState(id, data) {
+    personaMeta[id] = {
+      connected: true,
+      name: data.name || personaConfig(id).label,
+      status: "online",
+    };
+    setChipStatus(id, "online");
+    if (id === persona) {
+      updateIdentity(id);
+      setStatus("connected", "Ask about capabilities, delivery, or engagement fit.");
+      setComposerEnabled(true);
+      if (inputEl) {
+        inputEl.placeholder = "Message " + (data.name || personaConfig(id).label) + "…";
+      }
+    }
+  }
+
+  function applyStandbyState(id, message) {
+    personaMeta[id] = {
+      connected: false,
+      name: personaConfig(id).label,
+      status: "standby",
+      error: message,
+    };
+    setChipStatus(id, "standby");
+    if (id === persona) {
+      setStatus("standby", message || "Digital twin is on standby. Use the enquiry form or try again later.");
+      setComposerEnabled(false);
+      if (inputEl) {
+        inputEl.placeholder = "Digital twin on standby";
+      }
+    }
+  }
+
+  function probePersona(id) {
+    setChipStatus(id, "connecting");
+    return fetch(healthURL(id), {
       method: "GET",
       headers: { Accept: "application/json" },
       credentials: "same-origin",
@@ -155,40 +285,102 @@
         return parseJSON(response);
       })
       .then(function (result) {
-        if (!result.ok || result.data.status !== "ok") {
-          throw new Error(errorFromData(result.data) || "Digital twin is unavailable.");
+        probedPersonas[id] = true;
+        if (result.ok && result.data.status === "ok") {
+          applyConnectedState(id, result.data);
+          return true;
         }
-
-        removeStaticMessages();
-        if (labelEl && result.data.name) {
-          labelEl.textContent = result.data.name;
-        }
-
-        setStatus("connected", "Ask about capabilities, delivery, or engagement fit.");
-        setComposerEnabled(true);
-        if (inputEl) {
-          inputEl.placeholder = "Message " + (result.data.name || "the digital twin") + "…";
-          inputEl.focus();
-        }
+        applyStandbyState(id, errorFromData(result.data) || "Digital twin is on standby.");
+        return false;
       })
       .catch(function (err) {
-        removeStaticMessages();
-        var message = err.message || "Digital twin is unavailable. Use the enquiry form.";
-        appendMessage("system", "System", message);
-        setStatus("unavailable", message);
-        setComposerEnabled(false);
-        if (inputEl) {
-          inputEl.placeholder = "Digital twin unavailable";
-        }
+        probedPersonas[id] = true;
+        applyStandbyState(id, err.message || "Digital twin is on standby.");
+        return false;
       });
   }
 
+  function connect(id) {
+    persona = id;
+    root.dataset.persona = id;
+    updateIdentity(id);
+    updatePickerSelection(id);
+
+    function renderIdleBody(online) {
+      bodyEl.innerHTML = "";
+      if (getHistory(id).length > 0) {
+        renderHistory(id);
+        return;
+      }
+      appendMessage("assistant", personaConfig(id).label, personaConfig(id).intro, null, {
+        skipHistory: true,
+      });
+      if (!online) {
+        appendMessage(
+          "system",
+          "System",
+          (personaMeta[id] && personaMeta[id].error) ||
+            "Digital twin is on standby. Use the enquiry form or try another twin.",
+          null,
+          { skipHistory: true }
+        );
+      }
+    }
+
+    if (personaMeta[id] && probedPersonas[id]) {
+      renderIdleBody(personaMeta[id].connected);
+      if (personaMeta[id].connected) {
+        updateIdentity(id);
+        setStatus("connected", "Ask about capabilities, delivery, or engagement fit.");
+        setComposerEnabled(true);
+        if (inputEl) {
+          inputEl.placeholder = "Message " + personaMeta[id].name + "…";
+        }
+      } else {
+        setStatus("standby", personaMeta[id].error || "Digital twin is on standby.");
+        setComposerEnabled(false);
+        if (inputEl) {
+          inputEl.placeholder = "Digital twin on standby";
+        }
+      }
+      return;
+    }
+
+    setStatus("connecting", "Checking digital twin availability…");
+    setComposerEnabled(false);
+    renderIdleBody(false);
+
+    probePersona(id).then(function (online) {
+      if (id !== persona) {
+        return;
+      }
+      renderIdleBody(online);
+    });
+  }
+
+  function switchPersona(id) {
+    if (id === persona) {
+      return;
+    }
+    connect(id);
+    if (showPicker) {
+      var url = new URL(window.location.href);
+      url.searchParams.set("persona", id);
+      history.replaceState(null, "", url.pathname + url.search + url.hash);
+    }
+  }
+
   function sendMessage(message) {
+    if (!personaMeta[persona] || !personaMeta[persona].connected) {
+      return;
+    }
+
     setComposerEnabled(false);
     appendMessage("user", "You", message);
-    history.push({ role: "user", content: message });
 
-    var pending = appendMessage("assistant", "Digital twin", "Thinking…", "twin-message-pending");
+    var pending = appendMessage("assistant", personaConfig(persona).label, "Thinking…", "twin-message-pending", {
+      skipHistory: true,
+    });
 
     fetch(chatURL, {
       method: "POST",
@@ -200,7 +392,14 @@
       body: JSON.stringify({
         persona: persona,
         message: message,
-        history: history.slice(0, -1),
+        history: getHistory(persona)
+          .filter(function (item) {
+            return item.role === "user" || item.role === "assistant";
+          })
+          .slice(0, -1)
+          .map(function (item) {
+            return { role: item.role, content: item.text };
+          }),
       }),
     })
       .then(function (response) {
@@ -213,9 +412,8 @@
         }
 
         var reply = result.data.reply || "";
-        var label = result.data.name || "Digital twin";
+        var label = result.data.name || personaConfig(persona).label;
         appendMessage("assistant", label, reply);
-        history.push({ role: "assistant", content: reply });
         setComposerEnabled(true);
         if (inputEl) {
           inputEl.focus();
@@ -224,13 +422,19 @@
       .catch(function (err) {
         pending.remove();
         appendMessage("system", "System", err.message || "Something went wrong. Try again or use the enquiry form.");
-        history.pop();
+        getHistory(persona).pop();
         setComposerEnabled(true);
         if (inputEl) {
           inputEl.focus();
         }
       });
   }
+
+  pickerButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      switchPersona(button.dataset.persona);
+    });
+  });
 
   if (formEl) {
     formEl.addEventListener("submit", function (event) {
@@ -247,5 +451,24 @@
     });
   }
 
-  connect();
+  var initialPersona = personaFromQuery() || defaultPersona;
+  if (showPicker) {
+    var known = pickerButtons.some(function (button) {
+      return button.dataset.persona === initialPersona;
+    });
+    if (!known) {
+      initialPersona = defaultPersona;
+    }
+    Promise.all(
+      pickerButtons.map(function (button) {
+        return probePersona(button.dataset.persona);
+      })
+    ).then(function () {
+      connect(initialPersona);
+    });
+  } else {
+    probePersona(initialPersona).then(function () {
+      connect(initialPersona);
+    });
+  }
 })();

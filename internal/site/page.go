@@ -42,6 +42,10 @@ type Page struct {
 	BlogSubstackURL string
 	BlogMediumURL   string
 
+	TwinPersonas   []TwinPersona
+	SelectedTwin   TwinPersona
+	ShowTwinPicker bool
+
 	// SEO
 	Path         string
 	CanonicalURL string

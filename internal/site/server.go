@@ -35,6 +35,7 @@ func New(cfg Config) (*Server, error) {
 		"hasCap":     hasCap,
 		"capName":    capabilityName,
 		"join":       strings.Join,
+		"lower":      strings.ToLower,
 	}).ParseFS(templateFS, "templates/*.html", "templates/admin/*.html")
 	if err != nil {
 		return nil, err
@@ -80,7 +81,8 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /about", s.handleAbout)
 	s.mux.HandleFunc("GET /contact", s.handleContactGet)
 	s.mux.HandleFunc("POST /contact", s.handleContactPost)
-	s.mux.HandleFunc("GET /contact/digital-twin", s.handleDigitalTwin)
+	s.mux.HandleFunc("GET /contact/digital-twin/{id}", s.handleDigitalTwinPersona)
+	s.mux.HandleFunc("GET /contact/digital-twin", s.handleDigitalTwinIndex)
 	s.mux.HandleFunc("GET /api/twin/health", s.handleTwinHealth)
 	s.mux.HandleFunc("POST /api/twin/chat", s.handleTwinChat)
 
@@ -234,21 +236,47 @@ func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleContactGet(w http.ResponseWriter, r *http.Request) {
-	page := s.basePage(
+	page := s.twinPage(
 		"Contact — Neon AI Cloud",
 		"Engage Neon AI Cloud on infrastructure, platforms, applications, embedded systems, or cloud.",
 		"contact",
+		r.URL.Query().Get("persona"),
+		true,
 	)
 	s.render(w, r, "contact.html", page)
 }
 
-func (s *Server) handleDigitalTwin(w http.ResponseWriter, r *http.Request) {
-	page := s.basePage(
-		"C-suite digital twin — Neon AI Cloud",
-		"Talk with a digital twin of the Neon AI Cloud C-suite. Agentic chatbot integration forthcoming.",
+func (s *Server) handleDigitalTwinIndex(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/contact/digital-twin/cto", http.StatusFound)
+}
+
+func (s *Server) handleDigitalTwinPersona(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimSpace(r.PathValue("id"))
+	twin, ok := TwinPersonaByID(id)
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+	page := s.twinPage(
+		twin.Label+" digital twin — Neon AI Cloud",
+		"Talk with the "+twin.Label+" digital twin at Neon AI Cloud.",
 		"contact",
+		twin.ID,
+		false,
 	)
 	s.render(w, r, "digital-twin.html", page)
+}
+
+func (s *Server) twinPage(title, description, activeNav, personaID string, showPicker bool) Page {
+	page := s.basePage(title, description, activeNav)
+	page.TwinPersonas = PublicTwinPersonas()
+	page.ShowTwinPicker = showPicker
+	if twin, ok := TwinPersonaByID(personaID); ok {
+		page.SelectedTwin = twin
+	} else {
+		page.SelectedTwin = DefaultTwinPersona()
+	}
+	return page
 }
 
 func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
@@ -257,10 +285,12 @@ func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := s.basePage(
+	page := s.twinPage(
 		"Contact — Neon AI Cloud",
 		"Engage Neon AI Cloud on infrastructure, platforms, applications, embedded systems, or cloud.",
 		"contact",
+		r.URL.Query().Get("persona"),
+		true,
 	)
 	page.FormName = strings.TrimSpace(r.FormValue("name"))
 	page.FormEmail = strings.TrimSpace(r.FormValue("email"))

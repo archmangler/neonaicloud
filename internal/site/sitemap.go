@@ -34,6 +34,15 @@ func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
 		{Loc: base + "/contact", ChangeFreq: "monthly", Priority: "0.7", LastMod: today},
 	}
 
+	for _, twin := range PublicTwinPersonas() {
+		entries = append(entries, urlEntry{
+			Loc:        base + "/contact/digital-twin/" + twin.ID,
+			ChangeFreq: "monthly",
+			Priority:   "0.6",
+			LastMod:    today,
+		})
+	}
+
 	for _, c := range Capabilities() {
 		entries = append(entries, urlEntry{
 			Loc:        base + "/capabilities/" + c.Slug,
