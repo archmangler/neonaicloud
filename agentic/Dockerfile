@@ -9,7 +9,7 @@ RUN groupadd --gid 65532 twin && \
 COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 
-COPY --chown=65532:twin twin.py api.py ./
+COPY --chown=65532:twin twin.py api.py llm.py ./
 COPY --chown=65532:twin ceo cto engineering sales ./
 
 ENV TWIN_HTTP_HOST=0.0.0.0 \

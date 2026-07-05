@@ -7,10 +7,17 @@ services:
     environment:
       TWIN_HTTP_HOST: "0.0.0.0"
       TWIN_HTTP_PORT: "7861"
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-ollama}
+      OLLAMA_SUPPORTS_TOOLS: ${OLLAMA_SUPPORTS_TOOLS:-false}
       PUSHOVER_TOKEN: ${PUSHOVER_TOKEN:-}
       PUSHOVER_USER: ${PUSHOVER_USER:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     expose:
       - "7861"
     read_only: true

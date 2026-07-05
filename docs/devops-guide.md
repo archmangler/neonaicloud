@@ -39,7 +39,8 @@ The browser never receives `OPENAI_API_KEY`. Chat on `/contact` calls same-origi
 
 Secrets you need before enabling chat:
 
-- `OPENAI_API_KEY` — required for digital twin replies
+- **OpenAI** (`LLM_PROVIDER=openai`): `OPENAI_API_KEY`
+- **Ollama** (`LLM_PROVIDER=ollama`): local Ollama running; no cloud key required
 
 Optional:
 
@@ -147,14 +148,53 @@ curl -fsS -X POST http://127.0.0.1:8080/api/twin/chat \
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
-| `OPENAI_API_KEY` | Yes | — | OpenAI credentials (server-side only) |
-| `OPENAI_MODEL` | No | `gpt-4o-mini` | Chat model |
+| `LLM_PROVIDER` | No | `openai` | `openai` or `ollama` |
+| `OPENAI_API_KEY` | OpenAI only | — | OpenAI credentials (server-side only) |
+| `OPENAI_MODEL` | No | `gpt-4o-mini` | OpenAI chat model |
+| `OLLAMA_BASE_URL` | Ollama only | `http://127.0.0.1:11434/v1` | Ollama OpenAI-compatible API base |
+| `OLLAMA_MODEL` | Ollama only | `llama3.2` | Local model name (`ollama list`) |
+| `OLLAMA_API_KEY` | No | `ollama` | Placeholder key for Ollama API client |
+| `OLLAMA_SUPPORTS_TOOLS` | No | `false` | Enable function calling if your model supports it |
 | `TWIN_HTTP_HOST` | No | `127.0.0.1` | Bind host (`0.0.0.0` in containers) |
 | `TWIN_HTTP_PORT` | No | `7861` | Bind port |
 | `PUSHOVER_TOKEN` | No | — | Optional notifications |
 | `PUSHOVER_USER` | No | — | Optional notifications |
 
 Persona content is baked into the twin image / `agentic/{ceo,cto,engineering,sales}/` on disk.
+
+### LLM provider selection
+
+**OpenAI (default)**
+
+```bash
+# agentic/.env or compose .env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+**Local Ollama (bare-metal)**
+
+```bash
+# Ensure Ollama is running and the model is pulled:
+# ollama pull llama3.2
+
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://127.0.0.1:11434/v1
+OLLAMA_MODEL=llama3.2
+```
+
+**Local Ollama (Docker Compose reaching host Ollama)**
+
+```bash
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
+OLLAMA_MODEL=llama3.2
+```
+
+Compose already maps `host.docker.internal` via `extra_hosts: host-gateway`.
+
+Tool calling (lead capture / unknown-question recording) is enabled for OpenAI by default. For Ollama, set `OLLAMA_SUPPORTS_TOOLS=true` only if your model supports OpenAI-style function calling; otherwise the twin answers without tools and falls back gracefully.
 
 ---
 
@@ -274,7 +314,8 @@ Convenience wrappers: `./scripts/start`, `./scripts/stop`, `./scripts/restart` �
 | Chat shows **Unavailable** | Twin not running or `TWIN_SERVICE_URL` unset | Start twin; set URL in site env |
 | `503 digital twin service is not configured` | Missing `TWIN_SERVICE_URL` on site | Set to twin internal URL |
 | `502 digital twin service unreachable` | Network / wrong URL | Verify twin health on internal network |
-| `OPENAI_API_KEY is not set` | Twin env missing key | Set in `agentic/.env` or compose `.env` |
+| `OPENAI_API_KEY is not set` | OpenAI provider without key | Set key or switch to `LLM_PROVIDER=ollama` |
+| Ollama chat errors / timeouts | Ollama not running or wrong model | `ollama list`; verify `OLLAMA_BASE_URL` and `OLLAMA_MODEL` |
 | Site serves stale templates | Old binary still running | `./scripts/site restart` (clears port + rebuilds) |
 | CMS login disabled | No admin env | Set `ADMIN_USER` and `ADMIN_PASSWORD` |
 | Compose site waits on twin | Twin unhealthy | Check `docker compose logs twin` |

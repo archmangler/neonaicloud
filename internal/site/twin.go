@@ -86,13 +86,12 @@ func (s *Server) handleTwinHealth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(resp.StatusCode)
-	_, _ = w.Write(body)
+	proxyTwinJSON(w, resp.StatusCode, body, "digital twin service error")
 }
 
 func (s *Server) handleTwinChat(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		writeJSON(w, http.StatusMethodNotAllowed, twinChatResponse{Error: "method not allowed"})
 		return
 	}
 
@@ -162,8 +161,37 @@ func (s *Server) handleTwinChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(resp.StatusCode)
-	_, _ = w.Write(body)
+	proxyTwinJSON(w, resp.StatusCode, body, "digital twin service error")
+}
+
+func proxyTwinJSON(w http.ResponseWriter, statusCode int, body []byte, fallback string) {
+	if statusCode >= 200 && statusCode < 300 && json.Valid(body) {
+		w.WriteHeader(statusCode)
+		_, _ = w.Write(body)
+		return
+	}
+
+	var parsed map[string]any
+	if json.Unmarshal(body, &parsed) == nil {
+		if detail, ok := parsed["detail"].(string); ok && detail != "" {
+			writeJSON(w, statusCode, map[string]string{"error": detail})
+			return
+		}
+		if errMsg, ok := parsed["error"].(string); ok && errMsg != "" {
+			writeJSON(w, statusCode, map[string]string{"error": errMsg})
+			return
+		}
+	}
+
+	msg := fallback
+	text := strings.TrimSpace(string(body))
+	if text != "" && !json.Valid(body) {
+		msg = text
+	}
+	if statusCode < 400 {
+		statusCode = http.StatusBadGateway
+	}
+	writeJSON(w, statusCode, map[string]string{"error": msg})
 }
 
 func (s *Server) twinHTTPClient() *http.Client {
