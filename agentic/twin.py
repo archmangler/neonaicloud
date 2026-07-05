@@ -5,11 +5,12 @@ import os
 from pathlib import Path
 
 import requests
-from openai import OpenAI
+from openai import APIConnectionError, APIError, APITimeoutError, RateLimitError
 from pypdf import PdfReader
 
+from llm import LLMConfig, create_llm_client, load_llm_config, verify_llm_ready
+
 BASE_DIR = Path(__file__).resolve().parent
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 DEFAULT_PERSONA = os.getenv("PERSONA", "cto")
 
 PERSONA_PROMPTS = {
@@ -91,6 +92,11 @@ tools = [
     {"type": "function", "function": record_unknown_question_json},
 ]
 
+NO_TOOL_GUIDANCE = (
+    "If you cannot answer a question from the provided context, say so clearly. "
+    "When the user is engaged, encourage them to get in touch via email and ask for their email address."
+)
+
 
 def extract_pdf_text(path: Path) -> str:
     reader = PdfReader(str(path))
@@ -131,7 +137,8 @@ def load_persona_assets(persona_id: str) -> tuple[str, str, dict[str, str]]:
 class DigitalTwin:
     def __init__(self, persona_id: str = DEFAULT_PERSONA):
         self.persona_id = persona_id
-        self._openai = None
+        self._llm = None
+        self._llm_config: LLMConfig | None = None
         self.name, self.summary, self.documents = load_persona_assets(persona_id)
         self.role_prompt = PERSONA_PROMPTS.get(
             persona_id,
@@ -139,17 +146,16 @@ class DigitalTwin:
         )
 
     @property
-    def openai(self):
-        if self._openai is None:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                raise RuntimeError(
-                    "OPENAI_API_KEY is not set. Copy agentic/.env.example to agentic/.env "
-                    "and add your key there, or export OPENAI_API_KEY in the shell before starting "
-                    "the server. The key stays server-side only — it is never sent to the chat UI."
-                )
-            self._openai = OpenAI(api_key=api_key)
-        return self._openai
+    def llm_config(self) -> LLMConfig:
+        if self._llm_config is None:
+            self._llm_config = load_llm_config()
+        return self._llm_config
+
+    @property
+    def llm(self):
+        if self._llm is None:
+            self._llm = create_llm_client(self.llm_config)
+        return self._llm
 
     def handle_tool_call(self, tool_calls):
         results = []
@@ -168,46 +174,104 @@ class DigitalTwin:
             )
         return results
 
-    def system_prompt(self) -> str:
+    def system_prompt(self, include_tool_guidance: bool = True) -> str:
         document_blocks = "\n\n".join(
             f"## {label.replace('-', ' ').title()}\n{text}"
             for label, text in self.documents.items()
         )
 
-        return (
+        prompt = (
             f"You are acting as {self.name}. {self.role_prompt} "
             f"Your responsibility is to represent {self.name} faithfully for website interactions. "
             "Use the summary and reference documents below to answer questions about background, "
             "capabilities, products, and engagement fit. "
-            "Be professional and engaging, as if talking to a prospective client evaluating Neon AI Cloud. "
-            "If you don't know the answer, use record_unknown_question to record it. "
-            "When the user is engaged, steer toward getting in touch via email and record it with record_user_details.\n\n"
-            f"## Summary\n{self.summary}\n\n"
+            "Be professional and engaging, as if talking to a prospective client evaluating Neon AI Cloud."
+        )
+
+        if include_tool_guidance and self.llm_config.supports_tools:
+            prompt += (
+                " If you don't know the answer, use record_unknown_question to record it. "
+                "When the user is engaged, steer toward getting in touch via email and record it with record_user_details."
+            )
+        elif include_tool_guidance:
+            prompt += f" {NO_TOOL_GUIDANCE}"
+
+        prompt += (
+            f"\n\n## Summary\n{self.summary}\n\n"
             f"## Reference Documents\n{document_blocks}\n\n"
             f"With this context, chat with the user while staying in character as {self.name}."
         )
+        return prompt
+
+    def _completion(self, messages: list[dict], use_tools: bool):
+        kwargs = {
+            "model": self.llm_config.model,
+            "messages": messages,
+        }
+        if use_tools:
+            kwargs["tools"] = tools
+        try:
+            return self.llm.chat.completions.create(**kwargs)
+        except APIConnectionError as exc:
+            raise RuntimeError(
+                f"Cannot reach the LLM service ({self.llm_config.provider}). Check that it is running."
+            ) from exc
+        except APITimeoutError as exc:
+            raise RuntimeError("LLM request timed out. Try a shorter question or a smaller model.") from exc
+        except RateLimitError as exc:
+            raise RuntimeError("LLM rate limit exceeded. Try again shortly.") from exc
+        except APIError as exc:
+            message = getattr(exc, "message", None) or str(exc)
+            if self.llm_config.provider == "ollama" and "not found" in message.lower():
+                raise RuntimeError(
+                    f"Ollama model '{self.llm_config.model}' is not installed. "
+                    f"Run: ollama pull {self.llm_config.model}"
+                ) from exc
+            raise RuntimeError(f"LLM request failed: {message}") from exc
 
     def chat(self, message: str, history: list[dict]) -> str:
-        messages = [{"role": "system", "content": self.system_prompt()}] + history + [{"role": "user", "content": message}]
-        done = False
-        while not done:
-            response = self.openai.chat.completions.create(model=MODEL, messages=messages, tools=tools)
-            if response.choices[0].finish_reason == "tool_calls":
-                message_obj = response.choices[0].message
-                tool_calls = message_obj.tool_calls
-                results = self.handle_tool_call(tool_calls)
-                messages.append(message_obj)
-                messages.extend(results)
-            else:
-                done = True
-        content = response.choices[0].message.content
-        return content or ""
+        use_tools = self.llm_config.supports_tools
+        messages = [{"role": "system", "content": self.system_prompt(include_tool_guidance=True)}] + history + [
+            {"role": "user", "content": message}
+        ]
+
+        try:
+            done = False
+            while not done:
+                response = self._completion(messages, use_tools=use_tools)
+                choice = response.choices[0]
+                if use_tools and choice.finish_reason == "tool_calls":
+                    message_obj = choice.message
+                    tool_calls = message_obj.tool_calls
+                    results = self.handle_tool_call(tool_calls)
+                    messages.append(message_obj)
+                    messages.extend(results)
+                else:
+                    done = True
+            content = response.choices[0].message.content
+            return content or ""
+        except Exception as exc:
+            if not use_tools:
+                raise
+            print(f"[llm] tool calling failed ({exc}); retrying without tools", flush=True)
+            messages = [{"role": "system", "content": self.system_prompt(include_tool_guidance=True)}] + history + [
+                {"role": "user", "content": message}
+            ]
+            response = self._completion(messages, use_tools=False)
+            content = response.choices[0].message.content
+            return content or ""
 
 
 def smoke_test(persona_id: str = DEFAULT_PERSONA) -> None:
     twin = DigitalTwin(persona_id)
+    config = twin.llm_config
     print(f"persona: {twin.persona_id}")
     print(f"name: {twin.name}")
+    print(f"llm provider: {config.provider}")
+    print(f"llm model: {config.model}")
+    if config.base_url:
+        print(f"llm base url: {config.base_url}")
+    print(f"tool calling: {config.supports_tools}")
     print(f"summary chars: {len(twin.summary)}")
     for label, text in twin.documents.items():
         print(f"  pdf {label}: {len(text)} chars")

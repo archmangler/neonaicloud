@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from llm import load_llm_config, verify_llm_ready
 from twin import BASE_DIR, DigitalTwin, smoke_test
 
 load_dotenv(BASE_DIR / ".env", override=True)
@@ -38,6 +39,9 @@ class HealthResponse(BaseModel):
     status: str
     persona: str
     name: str
+    llm_provider: str = ""
+    llm_model: str = ""
+    error: str = ""
 
 
 @lru_cache(maxsize=8)
@@ -69,7 +73,21 @@ def normalize_history(history: list[ChatMessage]) -> list[dict]:
 
 @app.get("/health")
 def root_health() -> dict[str, str]:
-    return {"status": "ok"}
+    try:
+        config = load_llm_config()
+        verify_llm_ready(config)
+        return {"status": "ok", "llm_provider": config.provider, "llm_model": config.model}
+    except RuntimeError as exc:
+        try:
+            config = load_llm_config()
+            return {
+                "status": "degraded",
+                "llm_provider": config.provider,
+                "llm_model": config.model,
+                "error": str(exc),
+            }
+        except RuntimeError:
+            return {"status": "degraded", "error": str(exc)}
 
 
 @app.get("/api/twin/{persona}/health", response_model=HealthResponse)
@@ -81,7 +99,23 @@ def persona_health(persona: str) -> HealthResponse:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-    return HealthResponse(status="ok", persona=twin.persona_id, name=twin.name)
+
+    llm_error = ""
+    status = "ok"
+    try:
+        verify_llm_ready(twin.llm_config)
+    except RuntimeError as exc:
+        status = "degraded"
+        llm_error = str(exc)
+
+    return HealthResponse(
+        status=status,
+        persona=twin.persona_id,
+        name=twin.name,
+        llm_provider=twin.llm_config.provider,
+        llm_model=twin.llm_config.model,
+        error=llm_error,
+    )
 
 
 @app.post("/api/twin/{persona}/chat", response_model=ChatResponse)
@@ -93,6 +127,7 @@ def persona_chat(persona: str, body: ChatRequest) -> ChatResponse:
 
     try:
         twin = get_twin(persona_id)
+        verify_llm_ready(twin.llm_config)
         reply = twin.chat(message, normalize_history(body.history))
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
@@ -100,6 +135,8 @@ def persona_chat(persona: str, body: ChatRequest) -> ChatResponse:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Chat failed: {exc}") from exc
 
     return ChatResponse(reply=reply, persona=twin.persona_id, name=twin.name)
 

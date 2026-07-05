@@ -107,6 +107,41 @@
     });
   }
 
+  function parseJSON(response) {
+    return response.text().then(function (text) {
+      if (!text) {
+        return { ok: response.ok, data: {} };
+      }
+      try {
+        return { ok: response.ok, data: JSON.parse(text) };
+      } catch (parseErr) {
+        var message = text;
+        if (message.indexOf("Internal Server Error") === 0) {
+          message = "The digital twin service returned an error. Check twin logs and LLM configuration.";
+        }
+        return { ok: false, data: { error: message } };
+      }
+    });
+  }
+
+  function errorFromData(data) {
+    if (!data) {
+      return "Request failed.";
+    }
+    if (typeof data.error === "string" && data.error) {
+      return data.error;
+    }
+    if (typeof data.detail === "string" && data.detail) {
+      return data.detail;
+    }
+    if (Array.isArray(data.detail)) {
+      return data.detail.map(function (item) {
+        return item.msg || JSON.stringify(item);
+      }).join(" ");
+    }
+    return "Request failed.";
+  }
+
   function connect() {
     setStatus("connecting", "Checking digital twin availability…");
     setComposerEnabled(false);
@@ -117,13 +152,11 @@
       credentials: "same-origin",
     })
       .then(function (response) {
-        return response.json().then(function (data) {
-          return { ok: response.ok, data: data };
-        });
+        return parseJSON(response);
       })
       .then(function (result) {
         if (!result.ok || result.data.status !== "ok") {
-          throw new Error(result.data.error || "Digital twin is unavailable.");
+          throw new Error(errorFromData(result.data) || "Digital twin is unavailable.");
         }
 
         removeStaticMessages();
@@ -165,14 +198,12 @@
       }),
     })
       .then(function (response) {
-        return response.json().then(function (data) {
-          return { ok: response.ok, data: data };
-        });
+        return parseJSON(response);
       })
       .then(function (result) {
         pending.remove();
         if (!result.ok) {
-          throw new Error(result.data.error || result.data.detail || "Chat request failed.");
+          throw new Error(errorFromData(result.data) || "Chat request failed.");
         }
 
         var reply = result.data.reply || "";

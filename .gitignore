@@ -10,6 +10,8 @@ dist/
 # Secrets (never commit)
 .env
 **/.env
+!.env.example
+agentic/.env
 *.exe
 
 # OS / editor
