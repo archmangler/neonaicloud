@@ -81,6 +81,15 @@ Only `published` products appear on `/products`, home, and capability pages.
 
 Hardened defaults: distroless static image, numeric non-root user (`65532`), no shell, dropped capabilities, read-only root filesystem (compose), `no-new-privileges`.
 
+**Full stack (site + digital twin):** see [docs/devops-guide.md](docs/devops-guide.md).
+
+```bash
+cp .env.example .env   # set OPENAI_API_KEY, PUBLIC_BASE_URL
+docker compose up --build -d
+```
+
+Site only (no chat):
+
 ```bash
 docker build -t neonaicloud-site .
 docker run --rm -p 8080:8080 \
@@ -94,14 +103,6 @@ docker run --rm -p 8080:8080 \
   -e ADMIN_PASSWORD='choose-a-strong-password' \
   -v neonsite-content:/data/content \
   neonaicloud-site
-```
-
-Or:
-
-```bash
-PUBLIC_BASE_URL=http://localhost:8080 \
-ADMIN_USER=admin ADMIN_PASSWORD='choose-a-strong-password' \
-docker compose up --build
 ```
 
 Probe liveness externally with `GET /healthz` (the image has no shell for in-container healthchecks).
@@ -134,8 +135,9 @@ Security response headers are applied on every response (`Content-Security-Polic
 | `cmd/neonsite` | Process entrypoint |
 | `internal/site` | HTTP handlers, CMS, templates, static assets |
 | `content/` | Product pages and media (CMS data) |
-| `scripts/` | Start / stop / restart control |
-| `docker-compose.yml` | Hardened local/prod-style run |
+| `scripts/` | Start / stop / restart control (`site`, `twin`) |
+| `docs/devops-guide.md` | Deployment guide for DevOps |
+| `docker-compose.yml` | Site + twin stack |
 | `bootstrap/` | Visual reference (CapOS aesthetic shipout) |
 | `guidelines/` | Design philosophy documents |
 

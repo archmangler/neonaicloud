@@ -1,4 +1,40 @@
 services:
+  twin:
+    build:
+      context: ./agentic
+      dockerfile: Dockerfile
+    image: neonaicloud-twin:local
+    environment:
+      TWIN_HTTP_HOST: "0.0.0.0"
+      TWIN_HTTP_PORT: "7861"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      PUSHOVER_TOKEN: ${PUSHOVER_TOKEN:-}
+      PUSHOVER_USER: ${PUSHOVER_USER:-}
+    expose:
+      - "7861"
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777,uid=65532,gid=65532
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65532:65532"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7861/health', timeout=3)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
   site:
     build: .
     image: neonaicloud-site:local
@@ -11,6 +47,10 @@ services:
       ADMIN_USER: ${ADMIN_USER:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-}
+      BLOG_SUBSTACK_URL: ${BLOG_SUBSTACK_URL:-https://neonai.substack.com}
+      BLOG_MEDIUM_URL: ${BLOG_MEDIUM_URL:-https://medium.com/@neonaicloud}
+      TWIN_SERVICE_URL: http://twin:7861
+      TWIN_DEFAULT_PERSONA: ${TWIN_DEFAULT_PERSONA:-cto}
     volumes:
       - site-content:/data/content
     read_only: true
@@ -21,6 +61,9 @@ services:
     cap_drop:
       - ALL
     user: "65532:65532"
+    depends_on:
+      twin:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
