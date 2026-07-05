@@ -1,0 +1,7 @@
+
+Which twins are public? All four
+History on switch:  keep separate threads per persona
+Default: Stay cto
+Unavailable twin: show with “Standby”
+Dedicated pages: Picker on /contact only and also /contact/digital-twin/{id}
+

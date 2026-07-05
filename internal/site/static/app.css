@@ -784,11 +784,54 @@ textarea {
 
 .twin-console {
   display: grid;
-  grid-template-rows: auto minmax(22rem, 1fr) auto;
+  grid-template-rows: auto auto minmax(22rem, 1fr) auto;
   gap: 0;
   overflow: hidden;
   padding: 0;
   min-height: 32rem;
+}
+
+.twin-persona-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.35);
+}
+
+.twin-persona-chip {
+  cursor: pointer;
+  gap: 0.45rem;
+  border-color: hsl(var(--border));
+  background: hsl(var(--background) / 0.72);
+  color: hsl(var(--foreground));
+}
+
+.twin-persona-chip.is-active {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.35);
+  color: hsl(var(--primary));
+}
+
+.twin-persona-chip-label {
+  font-weight: 600;
+}
+
+.twin-chip-status {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.twin-chip-status-online {
+  color: hsl(145 60% 45%);
+}
+
+.twin-chip-status-standby {
+  color: hsl(var(--muted-foreground));
 }
 
 .twin-console-header {

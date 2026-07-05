@@ -12,10 +12,10 @@
         <header class="page-header">
           {{template "site-slogan" .}}
           <p class="eyebrow">Contact · Digital twin</p>
-          <h1>C-suite digital twin</h1>
+          <h1>{{.SelectedTwin.Label}} digital twin</h1>
           <p class="lead">
-            Conversational channel for a digital twin of the Neon AI Cloud C-suite.
-            Also available on the <a href="/contact#csuite-digital-twin">contact page</a>.
+            Conversational channel for {{.SelectedTwin.Name}}, {{.SelectedTwin.Label | lower}} at Neon AI Cloud.
+            Choose another twin on the <a href="/contact?persona=cto#csuite-digital-twin">contact page</a>.
           </p>
           <div class="system-line" role="presentation"></div>
         </header>

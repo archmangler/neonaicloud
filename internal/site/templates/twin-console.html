@@ -8,17 +8,42 @@
   class="twin-console neon-panel"
   data-agent-slot="csuite-digital-twin"
   data-agent-status="connecting"
-  data-persona="cto"
-  data-health-url="/api/twin/health?persona=cto"
+  data-persona="{{.SelectedTwin.ID}}"
+  data-show-picker="{{if .ShowTwinPicker}}true{{else}}false{{end}}"
+  data-health-url="/api/twin/health"
   data-chat-url="/api/twin/chat"
-  aria-label="C-suite digital twin chat"
+  data-twin-initials="{{.SelectedTwin.Initials}}"
+  data-twin-label="{{.SelectedTwin.Label}}"
+  data-twin-intro="{{.SelectedTwin.Intro}}"
+  aria-label="Digital twin chat"
 >
+  {{if .ShowTwinPicker}}
+  <div class="twin-persona-picker" role="tablist" aria-label="Choose a digital twin">
+    {{range .TwinPersonas}}
+    <button
+      type="button"
+      class="chip twin-persona-chip{{if eq .ID $.SelectedTwin.ID}} is-active{{end}}"
+      role="tab"
+      aria-selected="{{if eq .ID $.SelectedTwin.ID}}true{{else}}false{{end}}"
+      data-persona="{{.ID}}"
+      data-initials="{{.Initials}}"
+      data-label="{{.Label}}"
+      data-intro="{{.Intro}}"
+      data-twin-status="connecting"
+    >
+      <span class="twin-persona-chip-label">{{.ShortLabel}}</span>
+      <span class="twin-chip-status" aria-hidden="true">…</span>
+    </button>
+    {{end}}
+  </div>
+  {{end}}
+
   <div class="twin-console-header">
     <div class="twin-console-identity">
-      <span class="twin-avatar" aria-hidden="true">CTO</span>
+      <span class="twin-avatar" aria-hidden="true">{{.SelectedTwin.Initials}}</span>
       <div>
         <p class="eyebrow">Digital twin</p>
-        <h2 class="card-title">Chief Technology Officer</h2>
+        <h2 class="card-title">{{.SelectedTwin.Label}}</h2>
       </div>
     </div>
     <div class="twin-console-meta">
@@ -30,29 +55,11 @@
     </div>
   </div>
 
-  <div class="twin-console-body" role="log" aria-live="polite" aria-relevant="additions">
-    <div class="twin-message twin-message-assistant" data-static="true">
-      <div class="twin-message-meta">
-        <span class="twin-avatar twin-avatar-sm" aria-hidden="true">CTO</span>
-        <p class="twin-message-label">Digital twin</p>
-      </div>
-      <div class="twin-bubble">
-        <p>
-          I represent Neon AI Cloud on architecture, platforms, AI infrastructure, and engagement fit.
-          Ask about our capabilities, how we work, or whether we are the right partner for your programme.
-        </p>
-      </div>
-    </div>
-
-    <div class="twin-message twin-message-system" data-static="true">
-      <p class="twin-message-label">System</p>
-      <p class="twin-system-text">Connecting to the live agent…</p>
-    </div>
-  </div>
+  <div class="twin-console-body" role="log" aria-live="polite" aria-relevant="additions"></div>
 
   <form class="twin-composer" action="#" method="post" aria-disabled="true">
     <label class="twin-composer-field" for="twin-message-input">
-      <span class="visually-hidden">Message to C-suite digital twin</span>
+      <span class="visually-hidden">Message to digital twin</span>
       <textarea
         id="twin-message-input"
         name="message"
