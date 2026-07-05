@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# Control the Neon AI Cloud digital twin API (FastAPI / uvicorn).
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+AGENTIC="$ROOT/agentic"
+VENV="${AGENTIC}/.venv"
+PID_FILE="${PID_FILE:-$ROOT/bin/twin.pid}"
+LOG_FILE="${LOG_FILE:-$ROOT/bin/twin.log}"
+TWIN_HTTP_HOST="${TWIN_HTTP_HOST:-127.0.0.1}"
+TWIN_HTTP_PORT="${TWIN_HTTP_PORT:-7861}"
+STOP_WAIT_SECS="${STOP_WAIT_SECS:-5}"
+START_WAIT_SECS="${START_WAIT_SECS:-12}"
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <start|stop|restart|status>
+
+Environment:
+  TWIN_HTTP_HOST   Bind host (default: 127.0.0.1)
+  TWIN_HTTP_PORT   Bind port (default: 7861)
+
+Examples:
+  ./scripts/twin start
+  ./scripts/twin restart
+  TWIN_HTTP_PORT=7862 ./scripts/twin start
+EOF
+}
+
+health_url() {
+  printf 'http://%s:%s/health\n' "$TWIN_HTTP_HOST" "$TWIN_HTTP_PORT"
+}
+
+is_running_pid() {
+  local pid="$1"
+  [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null
+}
+
+port_in_use() {
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"$TWIN_HTTP_PORT" -sTCP:LISTEN -t >/dev/null 2>&1
+    return $?
+  fi
+  return 1
+}
+
+stop_twin() {
+  echo "Stopping digital twin API (port $TWIN_HTTP_PORT)..."
+
+  if [[ -f "$PID_FILE" ]]; then
+    local pid
+    pid="$(tr -d '[:space:]' <"$PID_FILE" || true)"
+    if is_running_pid "$pid"; then
+      echo "  send TERM -> pid $pid"
+      kill -TERM "$pid" 2>/dev/null || true
+      local deadline=$((SECONDS + STOP_WAIT_SECS))
+      while ((SECONDS < deadline)); do
+        is_running_pid "$pid" || break
+        sleep 0.1
+      done
+      if is_running_pid "$pid"; then
+        echo "  send KILL -> pid $pid"
+        kill -KILL "$pid" 2>/dev/null || true
+      fi
+    fi
+  fi
+
+  rm -f "$PID_FILE"
+
+  if port_in_use; then
+    echo "error: port $TWIN_HTTP_PORT is still in use" >&2
+    lsof -nP -iTCP:"$TWIN_HTTP_PORT" -sTCP:LISTEN 2>/dev/null || true
+    return 1
+  fi
+
+  echo "Stopped. Port $TWIN_HTTP_PORT is free."
+}
+
+ensure_venv() {
+  if [[ ! -x "$VENV/bin/python" ]]; then
+    echo "Creating Python venv at $VENV ..."
+    python3.11 -m venv "$VENV" 2>/dev/null || python3 -m venv "$VENV"
+  fi
+  "$VENV/bin/pip" install -q -U pip
+  "$VENV/bin/pip" install -q -r "$AGENTIC/requirements.txt"
+}
+
+wait_healthy() {
+  local deadline=$((SECONDS + START_WAIT_SECS))
+  while ((SECONDS < deadline)); do
+    if curl -fsS "$(health_url)" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  return 1
+}
+
+start_twin() {
+  stop_twin || true
+  ensure_venv
+
+  if [[ ! -f "$AGENTIC/.env" ]]; then
+    echo "warning: $AGENTIC/.env not found — copy agentic/.env.example and set OPENAI_API_KEY" >&2
+  fi
+
+  mkdir -p "$(dirname "$PID_FILE")"
+  : >"$LOG_FILE"
+
+  echo "Starting twin API on $TWIN_HTTP_HOST:$TWIN_HTTP_PORT ..."
+  (
+    cd "$AGENTIC"
+    export TWIN_HTTP_HOST TWIN_HTTP_PORT
+    exec "$VENV/bin/python" api.py
+  ) >>"$LOG_FILE" 2>&1 &
+  local pid=$!
+  echo "$pid" >"$PID_FILE"
+
+  sleep 0.2
+  if ! is_running_pid "$pid"; then
+    echo "error: twin API exited immediately; log:" >&2
+    cat "$LOG_FILE" >&2 || true
+    rm -f "$PID_FILE"
+    exit 1
+  fi
+
+  if ! wait_healthy; then
+    echo "error: twin API did not become healthy at $(health_url)" >&2
+    cat "$LOG_FILE" >&2 || true
+    stop_twin || true
+    exit 1
+  fi
+
+  echo "Started pid $pid"
+  echo "Health: $(health_url)"
+  echo "Log:    $LOG_FILE"
+  echo "Site:   export TWIN_SERVICE_URL=http://$TWIN_HTTP_HOST:$TWIN_HTTP_PORT"
+}
+
+status_twin() {
+  echo "TWIN_HTTP_HOST=$TWIN_HTTP_HOST TWIN_HTTP_PORT=$TWIN_HTTP_PORT"
+  if [[ -f "$PID_FILE" ]]; then
+    local pid
+    pid="$(tr -d '[:space:]' <"$PID_FILE" || true)"
+    if is_running_pid "$pid"; then
+      echo "Status: running (pid $pid)"
+    else
+      echo "Status: stopped (stale pid file)"
+    fi
+  else
+    echo "Status: stopped"
+  fi
+
+  if curl -fsS "$(health_url)" >/dev/null 2>&1; then
+    echo "Health: ok ($(health_url))"
+  else
+    echo "Health: not responding"
+    return 1
+  fi
+}
+
+main() {
+  local cmd="${1:-}"
+  case "$cmd" in
+    start) start_twin ;;
+    stop) stop_twin ;;
+    restart) start_twin ;;
+    status) status_twin ;;
+    -h | --help | help) usage ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+}
+
+main "$@"

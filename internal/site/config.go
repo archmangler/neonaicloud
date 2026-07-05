@@ -9,25 +9,29 @@ import (
 
 // Config holds runtime settings for the site and CMS.
 type Config struct {
-	ContentDir     string
-	PublicBaseURL  string
-	BlogSubstackURL string
-	BlogMediumURL   string
-	AdminUser      string
-	AdminPassword  string
-	SessionSecret  string
+	ContentDir          string
+	PublicBaseURL       string
+	BlogSubstackURL     string
+	BlogMediumURL       string
+	AdminUser           string
+	AdminPassword       string
+	SessionSecret       string
+	TwinServiceURL      string
+	TwinDefaultPersona  string
 }
 
 // ConfigFromEnv loads configuration from environment variables.
 func ConfigFromEnv() Config {
 	cfg := Config{
-		ContentDir:      envOr("CONTENT_DIR", "content"),
-		PublicBaseURL:   strings.TrimSpace(os.Getenv("PUBLIC_BASE_URL")),
-		BlogSubstackURL: envOr("BLOG_SUBSTACK_URL", "https://neonai.substack.com"),
-		BlogMediumURL:   envOr("BLOG_MEDIUM_URL", "https://medium.com/@neonaicloud"),
-		AdminUser:       strings.TrimSpace(os.Getenv("ADMIN_USER")),
-		AdminPassword:   os.Getenv("ADMIN_PASSWORD"),
-		SessionSecret:   strings.TrimSpace(os.Getenv("ADMIN_SESSION_SECRET")),
+		ContentDir:         envOr("CONTENT_DIR", "content"),
+		PublicBaseURL:      strings.TrimSpace(os.Getenv("PUBLIC_BASE_URL")),
+		BlogSubstackURL:    envOr("BLOG_SUBSTACK_URL", "https://neonai.substack.com"),
+		BlogMediumURL:      envOr("BLOG_MEDIUM_URL", "https://medium.com/@neonaicloud"),
+		AdminUser:          strings.TrimSpace(os.Getenv("ADMIN_USER")),
+		AdminPassword:      os.Getenv("ADMIN_PASSWORD"),
+		SessionSecret:      strings.TrimSpace(os.Getenv("ADMIN_SESSION_SECRET")),
+		TwinServiceURL:     strings.TrimRight(strings.TrimSpace(os.Getenv("TWIN_SERVICE_URL")), "/"),
+		TwinDefaultPersona: envOr("TWIN_DEFAULT_PERSONA", "cto"),
 	}
 	if cfg.SessionSecret == "" && cfg.AdminPassword != "" {
 		sum := sha256.Sum256([]byte("neonaicloud-session:" + cfg.AdminPassword))

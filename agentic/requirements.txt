@@ -1,6 +1,7 @@
 requests
 python-dotenv
-gradio
+gradio>=6.0
 pypdf
 openai
-openai-agents
+fastapi
+uvicorn[standard]

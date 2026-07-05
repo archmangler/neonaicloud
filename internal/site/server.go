@@ -81,6 +81,8 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /contact", s.handleContactGet)
 	s.mux.HandleFunc("POST /contact", s.handleContactPost)
 	s.mux.HandleFunc("GET /contact/digital-twin", s.handleDigitalTwin)
+	s.mux.HandleFunc("GET /api/twin/health", s.handleTwinHealth)
+	s.mux.HandleFunc("POST /api/twin/chat", s.handleTwinChat)
 
 	s.mux.HandleFunc("GET /admin/login", s.handleAdminLoginGet)
 	s.mux.HandleFunc("POST /admin/login", s.handleAdminLoginPost)

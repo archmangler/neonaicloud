@@ -864,6 +864,16 @@ textarea {
   box-shadow: 0 0 10px hsl(38 92% 55% / 0.45);
 }
 
+.twin-presence-dot-online {
+  background: hsl(142 72% 45%);
+  box-shadow: 0 0 10px hsl(142 72% 45% / 0.5);
+}
+
+.twin-message-pending .twin-bubble {
+  opacity: 0.72;
+  font-style: italic;
+}
+
 .twin-console-body {
   display: flex;
   flex-direction: column;

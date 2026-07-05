@@ -6,6 +6,10 @@ dist/
 # Local tooling
 .venv-pdf/
 .venv/
+
+# Secrets (never commit)
+.env
+**/.env
 *.exe
 
 # OS / editor

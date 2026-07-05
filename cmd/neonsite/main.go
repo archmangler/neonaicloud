@@ -24,6 +24,11 @@ func main() {
 	} else {
 		log.Printf("admin CMS disabled (set ADMIN_USER and ADMIN_PASSWORD to enable)")
 	}
+	if cfg.TwinServiceURL != "" {
+		log.Printf("digital twin proxy enabled -> %s (default persona: %s)", cfg.TwinServiceURL, cfg.TwinDefaultPersona)
+	} else {
+		log.Printf("digital twin proxy disabled (set TWIN_SERVICE_URL to enable)")
+	}
 
 	if err := http.ListenAndServe(addr, srv.Handler()); err != nil {
 		log.Fatalf("listen: %v", err)
