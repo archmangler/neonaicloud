@@ -10,7 +10,12 @@ COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 
 COPY --chown=65532:twin twin.py api.py llm.py ./
-COPY --chown=65532:twin ceo cto engineering sales ./
+# Copy each persona dir separately — a single COPY ceo cto ... ./ flattens
+# all files into /app and breaks load_persona_assets() (/app/{persona}/).
+COPY --chown=65532:twin ceo/ ./ceo/
+COPY --chown=65532:twin cto/ ./cto/
+COPY --chown=65532:twin engineering/ ./engineering/
+COPY --chown=65532:twin sales/ ./sales/
 
 ENV TWIN_HTTP_HOST=0.0.0.0 \
     TWIN_HTTP_PORT=7861 \
