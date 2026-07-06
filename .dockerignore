@@ -2,7 +2,7 @@
 .gitignore
 bin
 dist
-**/neonsite
+/neonsite
 .venv*
 *.log
 *.pid
