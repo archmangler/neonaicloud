@@ -89,6 +89,34 @@ Wait for DNS to propagate (often 5–30 minutes).
 
 ## Phase 2 — Secure and prepare the server
 
+### Option A — Automated install script (recommended)
+
+After SSH as **root** (or any user with `sudo`), run the all-in-one installer. It installs Docker, Caddy, UFW, clones the repo, writes `.env` and the Caddyfile, builds images, and starts the stack.
+
+**Interactive** (prompts for repo URL, domain, API key):
+
+```bash
+git clone https://github.com/<your-org>/neonaicloud.git /tmp/neonaicloud
+sudo /tmp/neonaicloud/deploy/ubuntu-24.04-install.sh
+```
+
+**Non-interactive** (set every required variable up front):
+
+```bash
+sudo REPO_URL=https://github.com/<your-org>/neonaicloud.git \
+     DOMAIN=yourdomain.com \
+     PUBLIC_BASE_URL=https://www.yourdomain.com \
+     OPENAI_API_KEY=sk-... \
+     ADMIN_PASSWORD='<strong-random-password>' \
+     /tmp/neonaicloud/deploy/ubuntu-24.04-install.sh
+```
+
+Ensure DNS A records for `@` and `www` point to the Droplet **before** the script reloads Caddy (or re-run `sudo systemctl reload caddy` after DNS propagates).
+
+Script: [`deploy/ubuntu-24.04-install.sh`](../deploy/ubuntu-24.04-install.sh)
+
+### Option B — Manual steps
+
 SSH in as root:
 
 ```bash

@@ -342,6 +342,7 @@ Bare-metal logs: `bin/twin.log`, `bin/neonsite.log`
 | --- | --- |
 | `docs/digitalocean-deployment-playbook.md` | Single-Droplet DO deployment (low traffic) |
 | `deploy/digitalocean-cloud-init.sh` | DO first-boot user-data template |
+| `deploy/ubuntu-24.04-install.sh` | Post-SSH install, build, and deploy (Ubuntu 24.04) |
 | `cmd/neonsite` | Go entrypoint |
 | `internal/site` | HTTP handlers, proxy, templates |
 | `agentic/api.py` | Twin FastAPI app |
