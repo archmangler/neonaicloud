@@ -340,6 +340,8 @@ Bare-metal logs: `bin/twin.log`, `bin/neonsite.log`
 
 | Path | Role |
 | --- | --- |
+| `docs/digitalocean-deployment-playbook.md` | Single-Droplet DO deployment (low traffic) |
+| `deploy/digitalocean-cloud-init.sh` | DO first-boot user-data template |
 | `cmd/neonsite` | Go entrypoint |
 | `internal/site` | HTTP handlers, proxy, templates |
 | `agentic/api.py` | Twin FastAPI app |
