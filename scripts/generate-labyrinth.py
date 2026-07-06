@@ -50,6 +50,42 @@ def ring_style(index: int) -> str:
     )
 
 
+def navigation_path() -> str:
+    """Classical 7-circuit unicursal route: entrance at bottom → centre."""
+    radii = [ring_radius(i) for i in range(N_CIRCUITS)]
+    lanes = [(radii[i] + (radii[i + 1] if i + 1 < N_CIRCUITS else R_HUB)) / 2 for i in range(N_CIRCUITS)]
+
+    segs = [
+        f"M {CX:.2f} {CY + lanes[0] + 8:.2f}",
+        f"L {pt(lanes[2], 103)[0]:.2f} {pt(lanes[2], 103)[1]:.2f}",
+        arc_path_segment(lanes[2], 103, 177, True),
+        f"L {pt(lanes[1], 177)[0]:.2f} {pt(lanes[1], 177)[1]:.2f}",
+        arc_path_segment(lanes[1], 177, 3, False),
+        f"L {pt(lanes[0], 3)[0]:.2f} {pt(lanes[0], 3)[1]:.2f}",
+        arc_path_segment(lanes[0], 3, 177, True),
+        f"L {pt(lanes[3], 177)[0]:.2f} {pt(lanes[3], 177)[1]:.2f}",
+        arc_path_segment(lanes[3], 177, 3, False),
+        f"L {pt(lanes[6], 3)[0]:.2f} {pt(lanes[6], 3)[1]:.2f}",
+        arc_path_segment(lanes[6], 3, 177, True),
+        f"L {pt(lanes[5], 177)[0]:.2f} {pt(lanes[5], 177)[1]:.2f}",
+        arc_path_segment(lanes[5], 177, 3, False),
+        f"L {pt(lanes[4], 3)[0]:.2f} {pt(lanes[4], 3)[1]:.2f}",
+        arc_path_segment(lanes[4], 3, 93, True),
+        f"L {CX:.2f} {CY:.2f}",
+    ]
+    return " ".join(segs)
+
+
+def arc_path_segment(r: float, a1: float, a2: float, cw: bool) -> str:
+    x1, y1 = pt(r, a2)
+    sweep = ((a2 - a1) if cw else (a1 - a2)) % 360
+    if sweep == 0:
+        sweep = 360
+    large = 1 if sweep > 180 else 0
+    sw = 1 if cw else 0
+    return f"A {r:.2f} {r:.2f} 0 {large} {sw} {x1:.2f} {y1:.2f}"
+
+
 def main() -> None:
     radii = [ring_radius(i) for i in range(N_CIRCUITS)]
     print("<!-- 7-circuit circular maze: rotating concentric wall rings -->")
@@ -80,6 +116,19 @@ def main() -> None:
         '      <circle class="labyrinth-hub" cx="100" cy="100" r="8" '
         'fill="url(#labyrinth-hub-glow)" stroke="url(#labyrinth-stroke)" stroke-width="2"/>'
     )
+    print("    </g>")
+    print("")
+    print("    <!-- Regenerate: python3 scripts/generate-labyrinth.py -->")
+    print('    <path id="labyrinth-route" class="labyrinth-route"')
+    print(f'      d="{navigation_path()}"')
+    print('      fill="none" stroke="none"/>')
+    print('    <g class="labyrinth-wanderer" filter="url(#labyrinth-ball-glow)">')
+    print('      <circle class="labyrinth-wanderer-ball" r="3.6" fill="url(#labyrinth-ball-fill)">')
+    print('        <animateMotion dur="52s" repeatCount="indefinite" rotate="auto" calcMode="linear">')
+    print('          <mpath href="#labyrinth-route"/>')
+    print("        </animateMotion>")
+    print("      </circle>")
+    print("    </g>")
 
 
 if __name__ == "__main__":

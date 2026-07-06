@@ -30,16 +30,31 @@
   <svg class="labyrinth-aura-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="labyrinth-stroke" x1="20" y1="20" x2="180" y2="180" gradientUnits="userSpaceOnUse">
-        <stop stop-color="hsl(233 100% 98%)" stop-opacity="1"/>
-        <stop offset="0.55" stop-color="hsl(263 92% 98%)" stop-opacity="1"/>
-        <stop offset="1" stop-color="hsl(233 100% 90%)" stop-opacity="1"/>
+        <stop stop-color="hsl(var(--primary) / 0.41)"/>
+        <stop offset="0.55" stop-color="hsl(var(--primary) / 0.39)"/>
+        <stop offset="1" stop-color="hsl(var(--primary) / 0.32)"/>
       </linearGradient>
       <radialGradient id="labyrinth-hub-glow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="hsl(263 92% 98%)" stop-opacity="1"/>
-        <stop offset="100%" stop-color="hsl(233 100% 90%)" stop-opacity="0"/>
+        <stop offset="0%" stop-color="hsl(var(--primary) / 0.34)"/>
+        <stop offset="100%" stop-color="hsl(var(--primary) / 0)"/>
       </radialGradient>
       <filter id="labyrinth-glow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="2.8" result="blur"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur"/>
+        <feComponentTransfer in="blur" result="softblur">
+          <feFuncA type="linear" slope="0.34"/>
+        </feComponentTransfer>
+        <feMerge>
+          <feMergeNode in="softblur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <radialGradient id="labyrinth-ball-fill" cx="35%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="hsl(38 100% 78%)"/>
+        <stop offset="55%" stop-color="hsl(28 100% 58%)"/>
+        <stop offset="100%" stop-color="hsl(18 92% 46%)"/>
+      </radialGradient>
+      <filter id="labyrinth-ball-glow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/>
         <feMerge>
           <feMergeNode in="blur"/>
           <feMergeNode in="SourceGraphic"/>
@@ -48,7 +63,7 @@
     </defs>
 
     <!-- Ambient circuit traces -->
-    <g class="labyrinth-field" stroke="url(#labyrinth-stroke)" stroke-width="1" opacity="0.45">
+    <g class="labyrinth-field" stroke="url(#labyrinth-stroke)" stroke-width="1" opacity="0.67">
       <circle class="labyrinth-orbit labyrinth-orbit-a" cx="100" cy="100" r="94"/>
       <circle class="labyrinth-orbit labyrinth-orbit-b" cx="100" cy="100" r="72"/>
       <path class="labyrinth-trace" d="M8 100 H36 M164 100 H192"/>
@@ -56,7 +71,7 @@
     </g>
 
     <!-- 7-circuit circular maze — walls rotate on concentric rings -->
-    <g class="labyrinth-structure" filter="url(#labyrinth-glow)" stroke="url(#labyrinth-stroke)" stroke-width="2.5" stroke-linecap="round">
+    <g class="labyrinth-structure" filter="url(#labyrinth-glow)" stroke="url(#labyrinth-stroke)" stroke-width="2" stroke-linecap="round">
       <g class="labyrinth-ring labyrinth-ring-0" style="--ring-duration: 56s; --ring-offset: 0deg; --ring-direction: normal;">
         <path class="labyrinth-wall" d="M 80.65 183.80 A 86.00 86.00 0 1 1 119.35 183.80"/>
       </g>
@@ -91,6 +106,22 @@
         <path class="labyrinth-wall" d="M 119.54 100.00 L 141.69 100.00"/>
       </g>
       <circle class="labyrinth-hub" cx="100" cy="100" r="8" fill="url(#labyrinth-hub-glow)" stroke="url(#labyrinth-stroke)" stroke-width="1"/>
+    </g>
+
+    <!-- Unicursal route: entrance → centre (walls rotate independently) -->
+    <path
+      id="labyrinth-route"
+      class="labyrinth-route"
+      d="M 100.00 188.46 L 86.88 156.81 A 58.31 58.31 0 0 1 41.77 103.05 L 30.71 103.63 A 69.38 69.38 0 0 0 169.29 103.63 L 180.35 104.21 A 80.46 80.46 0 0 1 19.65 104.21 L 52.83 102.47 A 47.23 47.23 0 0 0 147.17 102.47 L 114.75 100.77 A 14.77 14.77 0 0 1 85.25 100.77 L 74.96 101.31 A 25.08 25.08 0 0 0 125.04 101.31 L 136.10 101.89 A 36.15 36.15 0 0 1 98.11 136.10 L 100.00 100.00"
+      fill="none"
+      stroke="none"
+    />
+    <g class="labyrinth-wanderer" filter="url(#labyrinth-ball-glow)">
+      <circle class="labyrinth-wanderer-ball" r="3.6" fill="url(#labyrinth-ball-fill)">
+        <animateMotion dur="52s" repeatCount="indefinite" rotate="auto" calcMode="linear">
+          <mpath href="#labyrinth-route"/>
+        </animateMotion>
+      </circle>
     </g>
   </svg>
 </div>
