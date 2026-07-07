@@ -3,7 +3,7 @@ title: Digital Twin Persona with Corporate Database - Customer Service Agent
 slug: digital-twin-csa
 status: published
 summary: A "digital twin" of any employee in your company configured to act as a customer service agent, hosted in any cloud environment and integrated with your back end corporate services.
-capabilities: premium-ai-application-development, platform-engineering, cloud
+capabilities: digital-twin-sites, premium-ai-application-development, platform-engineering, cloud
 updated: 2026-07-04
 ---
 

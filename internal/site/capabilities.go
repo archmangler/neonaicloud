@@ -12,6 +12,27 @@ type Capability struct {
 
 var capabilities = []Capability{
 	{
+		Slug:    "digital-twin-sites",
+		Name:    "Digital Twin Sites",
+		Outcome: "Corporate websites with embedded digital twins for customer service, sales, and technical first-line support—grounded in your knowledge base and deployed for production.",
+		Overview: "We integrate agentic digital twins into business websites so visitors can speak with AI representatives trained on company knowledge—" +
+			"product documentation, role profiles, policies, and sales collateral. Twins act as customer service, sales, and technical first-line agents " +
+			"while keeping LLM credentials and knowledge stores server-side. Engagements include production-grade deployment consulting: hardened containers, " +
+			"TLS, health checks, and operational runbooks so the site and twin stack are dependable beyond a prototype.",
+		Deliverables: []string{
+			"Branded corporate website integrated with multi-persona digital twins",
+			"Knowledge-base ingestion and persona configuration (service, sales, technical)",
+			"Secure same-origin chat proxy and server-side LLM integration",
+			"Production deployment packaging, TLS, monitoring, and handover runbooks",
+		},
+		Engagement: []string{
+			"Define personas, knowledge sources, and visitor outcomes",
+			"Configure twins against company content and acceptance criteria",
+			"Integrate chat into the public site with secure proxying",
+			"Deploy, validate, and transfer production operations",
+		},
+	},
+	{
 		Slug:    "premium-ai-application-development",
 		Name:    "Premium AI Application Development",
 		Outcome: "Production-grade AI applications engineered for reliability, operability, and long-term ownership.",
