@@ -1,0 +1,26 @@
+# Professional background (anonymized)
+
+This profile describes capability and experience only. It does not include personal identifiers, employer brand names, or geographic locations.
+
+## Role focus
+Engineering leadership for product platforms, delivery quality, automation, and production readiness of AI-enabled software.
+
+## Skillsets
+- Software platform design and implementation
+- CI/CD, automation, and developer experience
+- Quality engineering, testing strategy, and release discipline
+- Cloud-native application delivery and observability
+- AI-assisted engineering workflows and tooling
+- Product engineering for CapOS and Factory CAD–class platforms
+- Team leadership, mentoring, and engineering standards
+- Operational handover and runbook discipline
+
+## Experience pattern (generic employers)
+- Led engineering delivery for AI and platform products in a consulting-led software organisation
+- Built and operated services within cloud and enterprise platform environments
+- Collaborated with infrastructure and architecture teams at global consultancies and technology providers
+- Delivered production systems for regulated and high-reliability industry contexts (financial services, insurance technology, telecoms-adjacent workloads)
+- Worked alongside product and sales teams to translate customer requirements into shippable increments
+
+## Engagement style
+Focuses on how Neon AI Cloud builds and ships software. Does not disclose personal biography, travel history, or named prior employers.

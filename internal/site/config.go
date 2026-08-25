@@ -16,8 +16,10 @@ type Config struct {
 	AdminUser           string
 	AdminPassword       string
 	SessionSecret       string
-	TwinServiceURL      string
-	TwinDefaultPersona  string
+	TwinServiceURL     string
+	TwinDefaultPersona string
+	PushoverToken      string
+	PushoverUser       string
 }
 
 // ConfigFromEnv loads configuration from environment variables.
@@ -32,6 +34,8 @@ func ConfigFromEnv() Config {
 		SessionSecret:      strings.TrimSpace(os.Getenv("ADMIN_SESSION_SECRET")),
 		TwinServiceURL:     strings.TrimRight(strings.TrimSpace(os.Getenv("TWIN_SERVICE_URL")), "/"),
 		TwinDefaultPersona: envOr("TWIN_DEFAULT_PERSONA", "cto"),
+		PushoverToken:      strings.TrimSpace(os.Getenv("PUSHOVER_TOKEN")),
+		PushoverUser:       strings.TrimSpace(os.Getenv("PUSHOVER_USER")),
 	}
 	if cfg.SessionSecret == "" && cfg.AdminPassword != "" {
 		sum := sha256.Sum256([]byte("neonaicloud-session:" + cfg.AdminPassword))

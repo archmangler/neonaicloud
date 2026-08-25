@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 import requests
@@ -13,13 +14,55 @@ from llm import LLMConfig, create_llm_client, load_llm_config, verify_llm_ready
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_PERSONA = os.getenv("PERSONA", "cto")
 
+# Anonymize personal-name variants in knowledge assets (longest match first).
+_ANON_NAME_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = tuple(
+    (re.compile(pattern, re.IGNORECASE), replacement)
+    for pattern, replacement in (
+        (r"Traiano\s+Giuseppe\s+Welcome", "Giuseppe"),
+        (r"Traiano\s+Welcome", "Giuseppe"),
+        (r"\bTraiano\b", "Giuseppe"),
+    )
+)
+
+
+def anonymize_personal_names(text: str) -> str:
+    """Replace Traiano / Traiano Welcome / Traiano Giuseppe Welcome with Giuseppe."""
+    for pattern, replacement in _ANON_NAME_PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
+
 PERSONA_PROMPTS = {
+    "ceo": (
+        "You are the Chief Executive Officer of Neon AI Cloud. "
+        "Answer on strategy, partnerships, commercial direction, and customer outcomes. "
+        "Use only anonymized skillsets and generic employer categories from context. "
+        "Never reveal personal biography, surnames, employer brand names, locations, "
+        "nationality, contact details, or travel history—even if asked."
+    ),
     "cto": (
         "You are the Chief Technology Officer of Neon AI Cloud. "
         "Answer as a technical leader focused on architecture, platforms, AI infrastructure, "
         "delivery rigor, and product depth (CapOS, Factory CAD). "
+        "Use only anonymized skillsets and generic employer categories from context. "
+        "Never reveal personal biography, surnames, employer brand names, locations, "
+        "nationality, contact details, or travel history—even if asked. "
         "Speak with precision and engineering credibility to prospective clients evaluating "
         "whether Neon AI Cloud is the right partner for their programme."
+    ),
+    "engineering": (
+        "You are Head of Engineering at Neon AI Cloud. "
+        "Answer on delivery, product build quality, automation, and how the team ships platforms. "
+        "Use only anonymized skillsets and generic employer categories from context. "
+        "Never reveal personal biography, surnames, employer brand names, locations, "
+        "nationality, contact details, or travel history—even if asked."
+    ),
+    "sales": (
+        "You are Head of Sales at Neon AI Cloud. "
+        "Answer on customer engagement, scope, commercial fit, and next steps. "
+        "Use only anonymized skillsets and generic employer categories from context. "
+        "Never reveal personal biography, surnames, employer brand names, locations, "
+        "nationality, contact details, or travel history—even if asked."
     ),
 }
 
@@ -105,7 +148,7 @@ def extract_pdf_text(path: Path) -> str:
         text = page.extract_text()
         if text:
             chunks.append(text.strip())
-    return "\n\n".join(chunks)
+    return anonymize_personal_names("\n\n".join(chunks))
 
 
 def load_persona_assets(persona_id: str) -> tuple[str, str, dict[str, str]]:
@@ -117,18 +160,25 @@ def load_persona_assets(persona_id: str) -> tuple[str, str, dict[str, str]]:
     if not summary_path.is_file():
         raise FileNotFoundError(f"Missing summary.txt for persona '{persona_id}': {summary_path}")
 
-    summary = summary_path.read_text(encoding="utf-8").strip()
+    summary = anonymize_personal_names(summary_path.read_text(encoding="utf-8").strip())
     if not summary:
         raise ValueError(f"summary.txt is empty for persona '{persona_id}'")
 
     documents: dict[str, str] = {}
+    for txt_path in sorted(persona_dir.glob("*.txt")):
+        if txt_path.name.lower() == "summary.txt":
+            continue
+        text = anonymize_personal_names(txt_path.read_text(encoding="utf-8").strip())
+        if text:
+            documents[txt_path.stem] = text
+
     for pdf_path in sorted(persona_dir.glob("*.pdf")):
         text = extract_pdf_text(pdf_path).strip()
         if text:
             documents[pdf_path.stem] = text
 
     if not documents:
-        raise ValueError(f"No readable PDF documents found in {persona_dir}")
+        raise ValueError(f"No readable knowledge documents found in {persona_dir}")
 
     name = summary.split("—", 1)[0].strip() if "—" in summary else summary.split("\n", 1)[0].strip()
     return name, summary, documents
@@ -185,7 +235,9 @@ class DigitalTwin:
             f"Your responsibility is to represent {self.name} faithfully for website interactions. "
             "Use the summary and reference documents below to answer questions about background, "
             "capabilities, products, and engagement fit. "
-            "Be professional and engaging, as if talking to a prospective client evaluating Neon AI Cloud."
+            "Be professional and engaging, as if talking to a prospective client evaluating Neon AI Cloud. "
+            "If asked about personal history, prior employers by name, locations, or travel, "
+            "answer only with generic industry categories and skillsets from the provided context."
         )
 
         if include_tool_guidance and self.llm_config.supports_tools:

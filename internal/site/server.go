@@ -279,40 +279,6 @@ func (s *Server) twinPage(title, description, activeNav, personaID string, showP
 	return page
 }
 
-func (s *Server) handleContactPost(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "invalid form", http.StatusBadRequest)
-		return
-	}
-
-	page := s.twinPage(
-		"Contact — Neon AI Cloud",
-		"Engage Neon AI Cloud on infrastructure, platforms, applications, embedded systems, or cloud.",
-		"contact",
-		r.URL.Query().Get("persona"),
-		true,
-	)
-	page.FormName = strings.TrimSpace(r.FormValue("name"))
-	page.FormEmail = strings.TrimSpace(r.FormValue("email"))
-	page.FormOrg = strings.TrimSpace(r.FormValue("organisation"))
-	page.FormMessage = strings.TrimSpace(r.FormValue("message"))
-
-	if page.FormName == "" || page.FormEmail == "" || page.FormMessage == "" {
-		page.ContactError = "Name, email, and message are required."
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		s.render(w, r, "contact.html", page)
-		return
-	}
-
-	log.Printf("contact enquiry from %q <%s> org=%q", page.FormName, page.FormEmail, page.FormOrg)
-	page.ContactSent = true
-	page.FormName = ""
-	page.FormEmail = ""
-	page.FormOrg = ""
-	page.FormMessage = ""
-	s.render(w, r, "contact.html", page)
-}
-
 func (s *Server) basePage(title, description, activeNav string) Page {
 	return Page{
 		Title:       title,
