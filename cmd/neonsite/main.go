@@ -29,6 +29,11 @@ func main() {
 	} else {
 		log.Printf("digital twin proxy disabled (set TWIN_SERVICE_URL to enable)")
 	}
+	if cfg.PushoverToken != "" && cfg.PushoverUser != "" {
+		log.Printf("contact notifications enabled (Pushover)")
+	} else {
+		log.Printf("contact notifications disabled (set PUSHOVER_TOKEN and PUSHOVER_USER to enable)")
+	}
 
 	if err := http.ListenAndServe(addr, srv.Handler()); err != nil {
 		log.Fatalf("listen: %v", err)

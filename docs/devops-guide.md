@@ -45,7 +45,7 @@ Secrets you need before enabling chat:
 Optional:
 
 - `ADMIN_USER` / `ADMIN_PASSWORD` — CMS at `/admin`
-- `PUSHOVER_TOKEN` / `PUSHOVER_USER` — twin lead/unknown-question alerts
+- `PUSHOVER_TOKEN` / `PUSHOVER_USER` — contact-form enquiries and twin lead/unknown-question alerts
 
 ---
 
@@ -157,8 +157,8 @@ curl -fsS -X POST http://127.0.0.1:8080/api/twin/chat \
 | `OLLAMA_SUPPORTS_TOOLS` | No | `false` | Enable function calling if your model supports it |
 | `TWIN_HTTP_HOST` | No | `127.0.0.1` | Bind host (`0.0.0.0` in containers) |
 | `TWIN_HTTP_PORT` | No | `7861` | Bind port |
-| `PUSHOVER_TOKEN` | No | — | Optional notifications |
-| `PUSHOVER_USER` | No | — | Optional notifications |
+| `PUSHOVER_TOKEN` | No* | — | Pushover app token (*required for contact form delivery) |
+| `PUSHOVER_USER` | No* | — | Pushover user/group key (*required for contact form delivery) |
 
 Persona content is baked into the twin image / `agentic/{ceo,cto,engineering,sales}/` on disk.
 
@@ -279,7 +279,11 @@ Do **not** publish port `7861` to the public internet. Only the site container n
 
 ### Chat without twin
 
-If `TWIN_SERVICE_URL` is unset, the site runs normally; contact chat shows **Unavailable** and the enquiry form still works.
+If `TWIN_SERVICE_URL` is unset, the site runs normally; contact chat shows **Unavailable** and the enquiry form still works when Pushover is configured.
+
+### Contact form without Pushover
+
+If `PUSHOVER_TOKEN` / `PUSHOVER_USER` are unset, `POST /contact` returns an error to the visitor and logs the failure. Set both variables (shared with the twin service) so enquiries reach staff as push notifications.
 
 ### Resource hints (starting point)
 

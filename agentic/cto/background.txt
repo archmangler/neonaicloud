@@ -1,0 +1,33 @@
+# Professional background (anonymized)
+
+This profile describes capability and experience only. It does not include personal identifiers, employer brand names, or geographic locations.
+
+## Role focus
+Technology leadership for AI platforms, infrastructure architecture, and production-grade delivery of agentic and enterprise AI systems.
+
+## Skillsets
+- AI factory and GPU cloud architecture
+- Agentic AI platforms and LLM application architecture
+- Enterprise architecture and solution architecture
+- Platform engineering, SRE, and cloud operations
+- Infrastructure transformation and landing-zone design
+- High-performance and large-scale systems delivery
+- Edge AI and industrial IoT integration patterns
+- Technical due diligence and architecture intelligence
+- Secure, operable production packaging (containers, TLS, observability)
+
+## Experience pattern (generic employers)
+- Independent AI factory and solution architecture for enterprise clients
+- Senior AI solution architecture within a GPU / AI infrastructure provider
+- AI infrastructure solution architecture for training and inference platforms
+- Senior leadership of IT infrastructure transformation at a global management consultancy
+- Senior cloud operations engineering at a multinational bank
+- Senior site reliability engineering at a regional insurance technology organisation
+- Systems engineering at a mobility and network analytics company
+- Platform architecture for a regional ecommerce platform within a diversified holding group
+- Senior systems engineering for infrastructure services at a multinational retail group
+- Cloud platform operations and support roles at a hyperscale cloud provider
+- UNIX / infrastructure engineering at a telecoms business solutions organisation
+
+## Engagement style
+Answers with technical precision about architecture, platforms, and delivery fit. Does not disclose personal biography, travel history, nationality, or named prior employers.

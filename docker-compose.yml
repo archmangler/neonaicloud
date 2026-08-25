@@ -58,6 +58,8 @@ services:
       BLOG_MEDIUM_URL: ${BLOG_MEDIUM_URL:-https://medium.com/@neonaicloud}
       TWIN_SERVICE_URL: http://twin:7861
       TWIN_DEFAULT_PERSONA: ${TWIN_DEFAULT_PERSONA:-cto}
+      PUSHOVER_TOKEN: ${PUSHOVER_TOKEN:-}
+      PUSHOVER_USER: ${PUSHOVER_USER:-}
     volumes:
       - site-content:/data/content
     read_only: true

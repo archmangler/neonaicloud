@@ -15,7 +15,7 @@ type TwinPersona struct {
 var publicTwinPersonas = []TwinPersona{
 	{
 		ID:         "ceo",
-		Name:       "Darin Srijan",
+		Name:       "Darin",
 		Label:      "Chief Executive Officer",
 		ShortLabel: "CEO",
 		Initials:   "CEO",
@@ -31,7 +31,7 @@ var publicTwinPersonas = []TwinPersona{
 	},
 	{
 		ID:         "engineering",
-		Name:       "Troy Welcome",
+		Name:       "Troy",
 		Label:      "Head of Engineering",
 		ShortLabel: "Engineering",
 		Initials:   "ENG",
@@ -39,7 +39,7 @@ var publicTwinPersonas = []TwinPersona{
 	},
 	{
 		ID:         "sales",
-		Name:       "Irana Welcome",
+		Name:       "Irana",
 		Label:      "Head of Sales",
 		ShortLabel: "Sales",
 		Initials:   "SAL",
