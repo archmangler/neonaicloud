@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 import requests
@@ -12,6 +13,24 @@ from llm import LLMConfig, create_llm_client, load_llm_config, verify_llm_ready
 
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_PERSONA = os.getenv("PERSONA", "cto")
+
+# Anonymize personal-name variants in knowledge assets (longest match first).
+_ANON_NAME_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = tuple(
+    (re.compile(pattern, re.IGNORECASE), replacement)
+    for pattern, replacement in (
+        (r"Traiano\s+Giuseppe\s+Welcome", "Giuseppe"),
+        (r"Traiano\s+Welcome", "Giuseppe"),
+        (r"\bTraiano\b", "Giuseppe"),
+    )
+)
+
+
+def anonymize_personal_names(text: str) -> str:
+    """Replace Traiano / Traiano Welcome / Traiano Giuseppe Welcome with Giuseppe."""
+    for pattern, replacement in _ANON_NAME_PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
 
 PERSONA_PROMPTS = {
     "cto": (
@@ -105,7 +124,7 @@ def extract_pdf_text(path: Path) -> str:
         text = page.extract_text()
         if text:
             chunks.append(text.strip())
-    return "\n\n".join(chunks)
+    return anonymize_personal_names("\n\n".join(chunks))
 
 
 def load_persona_assets(persona_id: str) -> tuple[str, str, dict[str, str]]:
@@ -117,7 +136,7 @@ def load_persona_assets(persona_id: str) -> tuple[str, str, dict[str, str]]:
     if not summary_path.is_file():
         raise FileNotFoundError(f"Missing summary.txt for persona '{persona_id}': {summary_path}")
 
-    summary = summary_path.read_text(encoding="utf-8").strip()
+    summary = anonymize_personal_names(summary_path.read_text(encoding="utf-8").strip())
     if not summary:
         raise ValueError(f"summary.txt is empty for persona '{persona_id}'")
 

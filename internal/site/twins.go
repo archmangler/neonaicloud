@@ -23,7 +23,7 @@ var publicTwinPersonas = []TwinPersona{
 	},
 	{
 		ID:         "cto",
-		Name:       "Traiano Giuseppe Welcome",
+		Name:       "Giuseppe",
 		Label:      "Chief Technology Officer",
 		ShortLabel: "CTO",
 		Initials:   "CTO",
