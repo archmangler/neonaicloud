@@ -48,7 +48,14 @@ func (s *ProductStore) mediaDir() string    { return filepath.Join(s.root, "medi
 
 // EnsureLayout creates content directories if missing.
 func (s *ProductStore) EnsureLayout() error {
-	for _, dir := range []string{s.root, s.productsDir(), s.mediaDir(), filepath.Join(s.mediaDir(), "products")} {
+	for _, dir := range []string{
+		s.root,
+		s.productsDir(),
+		s.blogsDir(),
+		s.mediaDir(),
+		filepath.Join(s.mediaDir(), "products"),
+		filepath.Join(s.mediaDir(), "blogs"),
+	} {
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
 		}

@@ -119,7 +119,8 @@ Security response headers are applied on every response (`Content-Security-Polic
 | `/products` | Published products |
 | `/products/:slug` | Product detail |
 | `/approach` | Delivery approach |
-| `/blogs` | Substack and Medium publications |
+| `/blogs` | Hosted articles plus Substack and Medium links |
+| `/blogs/:slug` | Individual blog article |
 | `/about` | About |
 | `/contact` | Contact + digital twin chat |
 | `/admin` | CMS (auth required) |

@@ -14,12 +14,33 @@
           <p class="eyebrow">Blogs</p>
           <h1>Publications</h1>
           <p class="lead">
-            Essays, notes, and technical commentary from Neon AI Cloud. Follow our writing on Substack and Medium.
+            Essays, notes, and technical commentary from Neon AI Cloud — hosted articles and external channels.
           </p>
           <div class="system-line" role="presentation"></div>
         </header>
 
-        <section class="grid-2" aria-label="Publication channels">
+        {{if .Blogs}}
+        <section class="section" aria-labelledby="site-blogs-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="site-blogs-heading">On this site</h2>
+              <p class="section-intro muted">Latest articles published on neonaicloud.com.</p>
+            </div>
+          </div>
+          <div class="grid-2">
+            {{range .Blogs}}
+            <a class="panel panel-link" href="/blogs/{{.Slug}}">
+              <p class="eyebrow">Blog · {{.Updated}}</p>
+              <h2 class="card-title">{{.Title}}</h2>
+              <p class="card-body">{{.Summary}}</p>
+              <p class="card-meta">Read article →</p>
+            </a>
+            {{end}}
+          </div>
+        </section>
+        {{end}}
+
+        <section class="grid-2" aria-label="External publication channels">
           <article class="panel">
             <p class="eyebrow">Substack</p>
             <h2 class="card-title">Long-form notes</h2>

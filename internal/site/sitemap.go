@@ -70,6 +70,24 @@ func (s *Server) handleSitemap(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	blogs, err := s.store.ListPublishedBlogs()
+	if err != nil {
+		log.Printf("sitemap blogs: %v", err)
+	} else {
+		for _, b := range blogs {
+			lastMod := b.Updated
+			if lastMod == "" {
+				lastMod = today
+			}
+			entries = append(entries, urlEntry{
+				Loc:        base + "/blogs/" + b.Slug,
+				ChangeFreq: "monthly",
+				Priority:   "0.8",
+				LastMod:    lastMod,
+			})
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(xml.Header))
