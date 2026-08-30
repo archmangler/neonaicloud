@@ -47,6 +47,8 @@ It can bring together:
 
 The goal is not just to generate documents faster. It is to make the engineering itself more repeatable and verifiable.
 
+![AI Factory Compiler — requirements in, architecture out](/media/blogs/factory-architect-requirements-to-bid.jpg)
+
 ![Design risk review — expose architecture risks while they are still design decisions](/media/blogs/factory-architect-design-risk.jpg)
 
 ## Designed for uncertainty
@@ -88,6 +90,8 @@ The initial release focuses on current AI Factory technologies and design patter
 - project management planning framework derived directly from the architecture
 
 Neon also supports structured vendor-option analysis, distinguishing between selected architecture bases, compatible alternatives, architecture branches and candidates requiring further evidence.
+
+![Governed architecture flow — CTO can defend, delivery can execute, CEO can stand behind](/media/blogs/factory-architect-accelerated-infrastructure.jpg)
 
 ## From Bare Metal to Token
 
