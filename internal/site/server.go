@@ -78,6 +78,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /products/{slug}", s.handleProduct)
 	s.mux.HandleFunc("GET /approach", s.handleApproach)
 	s.mux.HandleFunc("GET /blogs", s.handleBlogs)
+	s.mux.HandleFunc("GET /blogs/{slug}", s.handleBlog)
 	s.mux.HandleFunc("GET /about", s.handleAbout)
 	s.mux.HandleFunc("GET /contact", s.handleContactGet)
 	s.mux.HandleFunc("POST /contact", s.handleContactPost)
@@ -125,6 +126,12 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		page.Products = products[:3]
 	} else {
 		page.Products = products
+	}
+	blogs, err := s.store.ListPublishedBlogs()
+	if err != nil {
+		log.Printf("list blogs: %v", err)
+	} else if len(blogs) > 0 {
+		page.Blog = &blogs[0]
 	}
 	s.render(w, r, "home.html", page)
 }
@@ -220,10 +227,30 @@ func (s *Server) handleApproach(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleBlogs(w http.ResponseWriter, r *http.Request) {
 	page := s.basePage(
 		"Blogs — Neon AI Cloud",
-		"Publications and commentary from Neon AI Cloud on Substack and Medium.",
+		"Publications and commentary from Neon AI Cloud on AI infrastructure, platforms, and engineering.",
 		"blogs",
 	)
+	blogs, err := s.store.ListPublishedBlogs()
+	if err != nil {
+		log.Printf("list blogs: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+	page.Blogs = blogs
 	s.render(w, r, "blogs.html", page)
+}
+
+func (s *Server) handleBlog(w http.ResponseWriter, r *http.Request) {
+	slug := r.PathValue("slug")
+	b, err := s.store.GetBlog(slug)
+	if err != nil || !b.Published() {
+		http.NotFound(w, r)
+		return
+	}
+	page := s.basePage(b.Title+" — Neon AI Cloud", b.Summary, "blogs")
+	page.Blog = &b
+	page.BlogBody = RenderMarkdown(b.Body)
+	s.render(w, r, "blog.html", page)
 }
 
 func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {

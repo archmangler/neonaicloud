@@ -25,6 +25,25 @@
           <div class="system-line" role="presentation"></div>
         </section>
 
+        {{if .Blog}}
+        <section class="announcement-panel panel" aria-labelledby="release-heading">
+          <div class="announcement-layout">
+            <div>
+              <p class="eyebrow">Now available</p>
+              <h2 class="section-title" id="release-heading">Neon AI Factory Architect — public release</h2>
+              <p class="card-body">
+                Turn AI Factory requirements into a governed, traceable solution architecture.
+                From bare metal to token — requirements in, architecture out, risks exposed early.
+              </p>
+            </div>
+            <div class="actions announcement-actions">
+              <a class="button-primary" href="/blogs/{{.Blog.Slug}}">Read the announcement</a>
+              <a class="chip" href="/contact">Discuss deployment</a>
+            </div>
+          </div>
+        </section>
+        {{end}}
+
         <section class="section" aria-labelledby="capabilities-heading">
           <div class="section-heading">
             <div>

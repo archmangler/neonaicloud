@@ -1,0 +1,45 @@
+{{define "blog.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          {{template "site-slogan" .}}
+          <p class="eyebrow">Blog</p>
+          <h1>{{.Blog.Title}}</h1>
+          <p class="lead">{{.Blog.Summary}}</p>
+          <p class="card-meta">Published {{.Blog.Updated}}</p>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="detail-grid">
+          <article class="panel prose blog-article">
+            {{.BlogBody}}
+          </article>
+          <aside class="stack">
+            <article class="panel">
+              <p class="eyebrow">Neon AI Factory Architect</p>
+              <h2 class="card-title">Public release</h2>
+              <p class="card-body">
+                Requirements in. Architecture out. Risks exposed early. Decisions remain human.
+              </p>
+              <div class="actions" style="margin-top: 1rem;">
+                <a class="button-primary" href="/contact">Discuss deployment</a>
+                <a class="chip" href="/blogs">All blogs</a>
+              </div>
+            </article>
+          </aside>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

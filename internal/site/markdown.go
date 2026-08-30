@@ -8,12 +8,13 @@ import (
 )
 
 var (
-	reBold = regexp.MustCompile(`\*\*([^*]+)\*\*`)
-	reLink = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
+	reBold  = regexp.MustCompile(`\*\*([^*]+)\*\*`)
+	reLink  = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
+	reImage = regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 )
 
 // RenderMarkdown converts a small Markdown subset to safe HTML.
-// Supports paragraphs, # / ## headings, - lists, **bold**, and [text](url).
+// Supports paragraphs, # / ## headings, - lists, **bold**, [text](url), and ![alt](url).
 func RenderMarkdown(src string) template.HTML {
 	src = strings.ReplaceAll(src, "\r\n", "\n")
 	src = strings.TrimSpace(src)
@@ -52,6 +53,12 @@ func RenderMarkdown(src string) template.HTML {
 		case trimmed == "":
 			flushPara()
 			closeList()
+		case strings.HasPrefix(trimmed, "![") && strings.Contains(trimmed, "]("):
+			flushPara()
+			closeList()
+			if img := renderImageLine(trimmed); img != "" {
+				b.WriteString(img)
+			}
 		case strings.HasPrefix(trimmed, "## "):
 			flushPara()
 			closeList()
@@ -99,6 +106,23 @@ func inlineMarkdown(text string) string {
 		return `<a href="` + href + `">` + label + `</a>`
 	})
 	return escaped
+}
+
+func renderImageLine(line string) string {
+	parts := reImage.FindStringSubmatch(line)
+	if len(parts) != 3 {
+		return ""
+	}
+	alt := html.EscapeString(parts[1])
+	src := parts[2]
+	if !safeLink(src) {
+		return ""
+	}
+	caption := ""
+	if alt != "" {
+		caption = `<figcaption>` + alt + `</figcaption>`
+	}
+	return `<figure class="prose-figure"><img src="` + src + `" alt="` + alt + `" loading="lazy">` + caption + `</figure>` + "\n"
 }
 
 func safeLink(href string) bool {

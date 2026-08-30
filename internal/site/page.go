@@ -23,6 +23,10 @@ type Page struct {
 	ProductBody      template.HTML
 	CapabilityFilter string
 
+	Blogs    []BlogPost
+	Blog     *BlogPost
+	BlogBody template.HTML
+
 	ContactSent  bool
 	ContactError string
 	FormName     string
