@@ -12,6 +12,8 @@ updated: 2026-08-30
 
 AI infrastructure has become too complex to design with spreadsheets, static diagrams and disconnected engineering documents spread across multiple teams and suppliers.
 
+**Product datasheet.** [Download Neon AI Factory Architect — Datasheet (PDF)](/media/blogs/neon-ai-factory-architect-datasheet.pdf) for capabilities, deployment options, and technical specifications.
+
 A modern AI Factory can combine thousands of GPUs, multiple network fabrics, high-performance storage, management systems, user-facing applications and tooling, security controls, power and cooling constraints, deployment dependencies and vendor-specific design rules.
 
 A small mistake in design can become an expensive procurement problem later or the loss of an RFI/RFP bid.
