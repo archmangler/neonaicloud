@@ -1168,6 +1168,10 @@ fieldset.field {
   font-style: italic;
 }
 
+.prose ul li a[href$=".pdf"] {
+  font-weight: 600;
+}
+
 .prose-figure {
   margin: 1.25rem 0 1.5rem;
 }

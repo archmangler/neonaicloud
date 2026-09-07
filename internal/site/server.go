@@ -66,7 +66,7 @@ func New(cfg Config) (*Server, error) {
 
 func (s *Server) routes() {
 	s.mux.Handle("GET /static/", http.StripPrefix("/static/", s.static))
-	s.mux.Handle("GET /media/", s.media)
+	s.mux.Handle("GET /media/", s.downloadFriendlyMedia(s.media))
 	s.mux.HandleFunc("GET /healthz", s.handleHealthz)
 	s.mux.HandleFunc("GET /sitemap.xml", s.handleSitemap)
 	s.mux.HandleFunc("GET /robots.txt", s.handleRobots)
@@ -105,6 +105,23 @@ func (s *Server) routes() {
 // Handler returns the root HTTP handler with security headers applied.
 func (s *Server) Handler() http.Handler {
 	return s.secureHeaders(s.mux)
+}
+
+// downloadFriendlyMedia encourages browsers to download PDF and archive assets
+// from the public read-only /media/ tree rather than only inline-previewing them.
+func (s *Server) downloadFriendlyMedia(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lower := strings.ToLower(r.URL.Path)
+		switch {
+		case strings.HasSuffix(lower, ".pdf"),
+			strings.HasSuffix(lower, ".zip"),
+			strings.HasSuffix(lower, ".tgz"),
+			strings.HasSuffix(lower, ".tar.gz"):
+			name := filepath.Base(r.URL.Path)
+			w.Header().Set("Content-Disposition", `attachment; filename="`+name+`"`)
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (s *Server) handleHealthz(w http.ResponseWriter, r *http.Request) {
