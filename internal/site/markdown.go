@@ -14,7 +14,8 @@ var (
 )
 
 // RenderMarkdown converts a small Markdown subset to safe HTML.
-// Supports paragraphs, # / ## headings, - lists, **bold**, [text](url), and ![alt](url).
+// Supports paragraphs, # / ## / ### headings, - / * lists, > blockquotes,
+// **bold**, [text](url), and ![alt](url).
 func RenderMarkdown(src string) template.HTML {
 	src = strings.ReplaceAll(src, "\r\n", "\n")
 	src = strings.TrimSpace(src)
@@ -59,6 +60,12 @@ func RenderMarkdown(src string) template.HTML {
 			if img := renderImageLine(trimmed); img != "" {
 				b.WriteString(img)
 			}
+		case strings.HasPrefix(trimmed, "### "):
+			flushPara()
+			closeList()
+			b.WriteString("<h4>")
+			b.WriteString(inlineMarkdown(strings.TrimSpace(trimmed[4:])))
+			b.WriteString("</h4>\n")
 		case strings.HasPrefix(trimmed, "## "):
 			flushPara()
 			closeList()
@@ -71,7 +78,13 @@ func RenderMarkdown(src string) template.HTML {
 			b.WriteString("<h2>")
 			b.WriteString(inlineMarkdown(strings.TrimSpace(trimmed[2:])))
 			b.WriteString("</h2>\n")
-		case strings.HasPrefix(trimmed, "- "):
+		case strings.HasPrefix(trimmed, "> "):
+			flushPara()
+			closeList()
+			b.WriteString(`<blockquote class="prose-quote"><p>`)
+			b.WriteString(inlineMarkdown(strings.TrimSpace(trimmed[2:])))
+			b.WriteString("</p></blockquote>\n")
+		case strings.HasPrefix(trimmed, "- "), strings.HasPrefix(trimmed, "* "):
 			flushPara()
 			if !inList {
 				b.WriteString("<ul>\n")

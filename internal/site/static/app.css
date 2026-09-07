@@ -1122,9 +1122,16 @@ fieldset.field {
 }
 
 .prose h2,
-.prose h3 {
+.prose h3,
+.prose h4 {
   margin: 0 0 0.75rem;
   font-weight: 600;
+}
+
+.prose h4 {
+  margin-top: 1.5rem;
+  font-size: 1.05rem;
+  color: hsl(var(--foreground));
 }
 
 .prose p,
@@ -1146,6 +1153,23 @@ fieldset.field {
   color: hsl(var(--primary));
   text-decoration: underline;
   text-underline-offset: 0.15em;
+}
+
+.prose-quote {
+  margin: 1rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid hsl(var(--primary));
+  background: hsl(var(--muted) / 0.45);
+}
+
+.prose-quote p {
+  margin: 0;
+  color: hsl(var(--foreground));
+  font-style: italic;
+}
+
+.prose ul li a[href$=".pdf"] {
+  font-weight: 600;
 }
 
 .prose-figure {
