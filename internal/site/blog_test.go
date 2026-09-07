@@ -57,6 +57,15 @@ func TestRenderMarkdownImage(t *testing.T) {
 	}
 }
 
+func TestRenderMarkdownFAQExtras(t *testing.T) {
+	html := string(RenderMarkdown("### Question?\n\n* one\n* two\n\n> Show them where it came from."))
+	for _, want := range []string{`<h4>Question?</h4>`, `<li>one</li>`, `<blockquote class="prose-quote">`, `Show them where it came from.`} {
+		if !contains(html, want) {
+			t.Fatalf("missing %q in %s", want, html)
+		}
+	}
+}
+
 func contains(s, sub string) bool {
 	return len(sub) == 0 || (len(s) >= len(sub) && indexOf(s, sub) >= 0)
 }
