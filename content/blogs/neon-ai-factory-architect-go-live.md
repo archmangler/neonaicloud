@@ -211,9 +211,10 @@ Download the Architecture Solution Pack:
 - [03 — Executive Architecture Brief](/media/blogs/go-live/03-acme-asia-executive-architecture-brief.pdf)
 - [04 — Full AI Factory Architecture](/media/blogs/go-live/04-acme-asia-full-ai-factory-architecture.pdf)
 - [05 — Security Architecture Report](/media/blogs/go-live/05-acme-asia-security-architecture-report.pdf)
-- [06 — Customer Proposal (v1.1)](/media/blogs/go-live/06-acme-asia-proposal-v1.1.pdf)
-- [07 — End-to-end GUI Walkthrough](/media/blogs/go-live/07-acme-asia-end2end-gui-walkthrough.pdf)
-- [08 — Neon AI Factory Architect Datasheet](/media/blogs/go-live/08-neon-ai-factory-architect-datasheet.pdf)
+- [06 — Project Delivery Plan](/media/blogs/go-live/06-acme-asia-project-delivery-plan.pdf)
+- [07 — Customer Proposal (v1.1)](/media/blogs/go-live/07-acme-asia-proposal-v1.1.pdf)
+- [08 — End-to-end GUI Walkthrough](/media/blogs/go-live/08-acme-asia-end2end-gui-walkthrough.pdf)
+- [09 — Neon AI Factory Architect Datasheet](/media/blogs/go-live/09-neon-ai-factory-architect-datasheet.pdf)
 
 The pack contains:
 
@@ -221,6 +222,7 @@ The pack contains:
 - Neon’s generated executive summary of the architecture
 - Neon’s solved full solution architecture proposal
 - Neon’s solved security architecture and findings
+- Neon’s project planning document for input to the delivery process
 - The final solution architecture proposal presented to the customer by the RFP response team
 - An end-to-end GUI walkthrough of the Neon workflow
 - The product datasheet
