@@ -79,6 +79,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /approach", s.handleApproach)
 	s.mux.HandleFunc("GET /blogs", s.handleBlogs)
 	s.mux.HandleFunc("GET /blogs/{slug}", s.handleBlog)
+	s.mux.HandleFunc("GET /downloads/architecture-solution-pack", s.handleArchitectureSolutionPack)
 	s.mux.HandleFunc("GET /about", s.handleAbout)
 	s.mux.HandleFunc("GET /contact", s.handleContactGet)
 	s.mux.HandleFunc("POST /contact", s.handleContactPost)
@@ -268,6 +269,16 @@ func (s *Server) handleBlog(w http.ResponseWriter, r *http.Request) {
 	page.Blog = &b
 	page.BlogBody = RenderMarkdown(b.Body)
 	s.render(w, r, "blog.html", page)
+}
+
+func (s *Server) handleArchitectureSolutionPack(w http.ResponseWriter, r *http.Request) {
+	page := s.basePage(
+		"Architecture Solution Pack — Neon AI Cloud",
+		"Download the eight ACME Asia architecture pack PDFs produced with Neon AI Factory Architect — from RFI and RFP through architecture, security, delivery planning and proposal.",
+		"downloads",
+	)
+	page.Downloads = ArchitectureSolutionPack()
+	s.render(w, r, "downloads_architecture_pack.html", page)
 }
 
 func (s *Server) handleAbout(w http.ResponseWriter, r *http.Request) {

@@ -27,6 +27,8 @@ type Page struct {
 	Blog     *BlogPost
 	BlogBody template.HTML
 
+	Downloads []DownloadAsset
+
 	ContactSent  bool
 	ContactError string
 	FormName     string

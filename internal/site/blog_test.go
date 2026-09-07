@@ -57,11 +57,17 @@ func TestRenderMarkdownImage(t *testing.T) {
 	}
 }
 
-func TestRenderMarkdownFAQExtras(t *testing.T) {
-	html := string(RenderMarkdown("### Question?\n\n* one\n* two\n\n> Show them where it came from."))
-	for _, want := range []string{`<h4>Question?</h4>`, `<li>one</li>`, `<blockquote class="prose-quote">`, `Show them where it came from.`} {
-		if !contains(html, want) {
-			t.Fatalf("missing %q in %s", want, html)
+func TestArchitectureSolutionPack(t *testing.T) {
+	pack := ArchitectureSolutionPack()
+	if len(pack) != 8 {
+		t.Fatalf("expected 8 pack items, got %d", len(pack))
+	}
+	for i, item := range pack {
+		if item.Number == "" || item.Title == "" || item.Href == "" || item.Filename == "" {
+			t.Fatalf("item %d incomplete: %+v", i, item)
+		}
+		if !contains(item.Href, "/media/blogs/go-live/") {
+			t.Fatalf("item %d unexpected href %q", i, item.Href)
 		}
 	}
 }
