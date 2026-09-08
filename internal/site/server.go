@@ -149,7 +149,14 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("list blogs: %v", err)
 	} else if len(blogs) > 0 {
+		// Prefer the product go-live announcement on the homepage.
 		page.Blog = &blogs[0]
+		for i := range blogs {
+			if blogs[i].Slug == "neon-ai-factory-architect-go-live" {
+				page.Blog = &blogs[i]
+				break
+			}
+		}
 	}
 	s.render(w, r, "home.html", page)
 }
