@@ -206,6 +206,10 @@ It shows the type of customer-facing artifact that can emerge from the Neon work
 
 Download the Architecture Solution Pack:
 
+[Open the Architecture Solution Pack download page](/downloads/architecture-solution-pack)
+
+Individual documents:
+
 - [01 — ACME Asia RFI (1024 GPU B300 AI Factory)](/media/blogs/go-live/01-acme-asia-rfi-1024-gpu-b300.pdf)
 - [02 — ACME Asia RFP (1024 GPU B300 AI Factory)](/media/blogs/go-live/02-acme-asia-rfp-1024-gpu-b300.pdf)
 - [03 — Executive Architecture Brief](/media/blogs/go-live/03-acme-asia-executive-architecture-brief.pdf)

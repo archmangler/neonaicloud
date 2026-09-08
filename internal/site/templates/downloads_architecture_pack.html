@@ -1,0 +1,71 @@
+{{define "downloads_architecture_pack.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+</head>
+<body>
+  <div class="site">
+    {{template "header" .}}
+    <main class="site-main">
+      <div class="main-inner">
+        <header class="page-header">
+          {{template "site-slogan" .}}
+          <p class="eyebrow">Downloads</p>
+          <h1>Architecture Solution Pack</h1>
+          <p class="lead">
+            Eight customer-facing documents from a representative Neon AI Factory Architect engagement —
+            from RFI and RFP inputs through architecture, security, delivery planning and proposal output.
+          </p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/blogs/neon-ai-factory-architect-go-live">Read the go-live announcement</a>
+            <a class="chip" href="/contact">Discuss evaluation</a>
+          </div>
+          <div class="system-line" role="presentation"></div>
+        </header>
+
+        <section class="section" aria-labelledby="pack-heading">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title" id="pack-heading">Pack contents</h2>
+              <p class="section-intro muted">
+                Public, read-only PDF downloads. Each file is served for direct download from this site.
+              </p>
+            </div>
+          </div>
+
+          <div class="download-list" role="list">
+            {{range .Downloads}}
+            <article class="panel download-item" role="listitem">
+              <div class="download-item-main">
+                <p class="eyebrow">Document {{.Number}}</p>
+                <h2 class="card-title">{{.Title}}</h2>
+                <p class="card-body">{{.Description}}</p>
+                <p class="card-meta">{{.Filename}}</p>
+              </div>
+              <div class="download-item-actions">
+                <a class="button-primary" href="{{.Href}}">Download PDF</a>
+              </div>
+            </article>
+            {{end}}
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="related-heading">
+          <p class="eyebrow">Related</p>
+          <h2 class="card-title" id="related-heading">Product datasheet</h2>
+          <p class="card-body">
+            For a concise product overview, download the Neon AI Factory Architect datasheet.
+          </p>
+          <div class="actions" style="margin-top: 1rem;">
+            <a class="button-primary" href="/media/blogs/go-live/09-neon-ai-factory-architect-datasheet.pdf">Download datasheet</a>
+            <a class="chip" href="/blogs/neon-ai-factory-architect-faq">Customer FAQ</a>
+          </div>
+        </section>
+      </div>
+    </main>
+    {{template "footer" .}}
+  </div>
+</body>
+</html>
+{{end}}

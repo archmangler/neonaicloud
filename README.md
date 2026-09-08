@@ -121,6 +121,7 @@ Security response headers are applied on every response (`Content-Security-Polic
 | `/approach` | Delivery approach |
 | `/blogs` | Hosted articles plus Substack and Medium links |
 | `/blogs/:slug` | Individual blog article |
+| `/downloads/architecture-solution-pack` | Architecture Solution Pack PDF downloads |
 | `/about` | About |
 | `/contact` | Contact + digital twin chat |
 | `/admin` | CMS (auth required) |
